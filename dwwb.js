@@ -70,13 +70,45 @@ function voteCommand(mention, receivedMessage) {
   const roleMentioned = getRoleFromMention(String(mention), receivedMessage);
 
   if (roleMentioned) {
-    receivedMessage.channel.send(roleMentioned.name + " selected.");
     let membersWithRole = roleMentioned.members;
+    let voteMessage = "It's time to vote!\n"; // TODO: allow custom message
+    let reacts = [
+      "🇦",
+      "🇧",
+      "🇨",
+      "🇩",
+      "🇪",
+      "🇫",
+      "🇬",
+      "🇭",
+      "🇮",
+      "🇯",
+      "🇰",
+      "🇱",
+      "🇲",
+      "🇳",
+      "🇴",
+      "🇵",
+      "🇶",
+      "🇷",
+      "🇸",
+      "🇹",
+      "🇺",
+      "🇻",
+      "🇼",
+      "🇽",
+      "🇾",
+      "🇿",
+    ];
 
     if (membersWithRole.size > 0) {
+      var i = 0;
       membersWithRole.forEach((member) => {
-        receivedMessage.channel.send("a member\n" + member.displayName);
+        voteMessage =
+          voteMessage + reacts[i] + ":  " + member.displayName + "\n";
+        i++;
       });
+      sendVoteMessage(receivedMessage, voteMessage, reacts, i);
     } else {
       receivedMessage.channel.send(
         "There are no members of " + roleMentioned.name + "."
@@ -88,6 +120,19 @@ function voteCommand(mention, receivedMessage) {
       "Role name required. Try '!vote @[role name]'"
     );
   }
+}
+
+async function sendVoteMessage(
+  receivedMessage,
+  voteMessage,
+  reacts,
+  reactCount
+) {
+  const msg = await receivedMessage.channel.send(voteMessage);
+  for (var i = 0; i < reactCount; i++) {
+    await msg.react(reacts[i]);
+  }
+  await msg.react("☮️");
 }
 
 function getRoleFromMention(mention, receivedMessage) {
