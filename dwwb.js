@@ -118,10 +118,9 @@ function voteCommand(mention, receivedMessage) {
       sendVoteMessage(receivedMessage, voteMessage, reacts, i);
     } else {
       receivedMessage.channel.send(
-        "There are no members of " + roleMentioned.name + "."
+        `There are no members of <@&${roleMentioned.id}>.`
       );
     }
-    //receivedMessage.channel.send(roleMentioned.members[0]);
   } else {
     receivedMessage.channel.send(
       "Role name required. Try `!vote @[role name]`."
