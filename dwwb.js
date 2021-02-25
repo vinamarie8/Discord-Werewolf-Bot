@@ -50,7 +50,9 @@ function processCommandQuestion(receivedMessage) {
   console.log("Arguments: " + arguments); // There may not be any arguments
 
   if (primaryCommand == "idol") {
-    receivedMessage.channel.send("Sorry, got nothing for ya.");
+    receivedMessage.channel.send("💯0% real", {
+      files: ["img/itsaneffingstick.jpg"],
+    });
   } else {
     receivedMessage.channel.send("I don't understand the command.");
   }
