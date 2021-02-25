@@ -14,6 +14,10 @@ client.on("message", (receivedMessage) => {
   if (receivedMessage.content.startsWith("!")) {
     processCommand(receivedMessage);
   }
+
+  if (receivedMessage.content.startsWith("?")) {
+    processCommandQuestion(receivedMessage);
+  }
 });
 
 function processCommand(receivedMessage) {
@@ -27,12 +31,26 @@ function processCommand(receivedMessage) {
 
   if (primaryCommand == "help") {
     helpCommand(arguments, receivedMessage);
-  } else if (primaryCommand == "multiply") {
-    multiplyCommand(arguments, receivedMessage);
+  } else if (primaryCommand == "vote") {
+    voteCommand(arguments, receivedMessage);
   } else {
-    receivedMessage.channel.send(
-      "I don't understand the command. Try `!help` or `!multiply`"
-    );
+    receivedMessage.channel.send("I don't understand the command. Try `!help`");
+  }
+}
+
+function processCommandQuestion(receivedMessage) {
+  let fullCommand = receivedMessage.content.substr(1); // Remove the leading exclamation mark
+  let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
+  let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
+  let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
+
+  console.log("Command received: " + primaryCommand);
+  console.log("Arguments: " + arguments); // There may not be any arguments
+
+  if (primaryCommand == "idol") {
+    receivedMessage.channel.send("Sorry, got nothing for ya.");
+  } else {
+    receivedMessage.channel.send("I don't understand the command.");
   }
 }
 
@@ -48,23 +66,41 @@ function helpCommand(arguments, receivedMessage) {
   }
 }
 
-function multiplyCommand(arguments, receivedMessage) {
-  if (arguments.length < 2) {
+function voteCommand(mention, receivedMessage) {
+  const roleMentioned = getRoleFromMention(String(mention), receivedMessage);
+
+  if (roleMentioned) {
+    receivedMessage.channel.send(roleMentioned.name + " selected.");
+    let membersWithRole = roleMentioned.members;
+
+    if (membersWithRole.size > 0) {
+      membersWithRole.forEach((member) => {
+        receivedMessage.channel.send("a member\n" + member.displayName);
+      });
+    } else {
+      receivedMessage.channel.send(
+        "There are no members of " + roleMentioned.name + "."
+      );
+    }
+    //receivedMessage.channel.send(roleMentioned.members[0]);
+  } else {
     receivedMessage.channel.send(
-      "Not enough values to multiply. Try `!multiply 2 4 10` or `!multiply 5.2 7`"
+      "Role name required. Try '!vote @[role name]'"
     );
-    return;
   }
-  let product = 1;
-  arguments.forEach((value) => {
-    product = product * parseFloat(value);
-  });
-  receivedMessage.channel.send(
-    "The product of " +
-      arguments +
-      " multiplied together is: " +
-      product.toString()
-  );
+}
+
+function getRoleFromMention(mention, receivedMessage) {
+  if (!mention) return;
+  if (mention.startsWith("<@&") && mention.endsWith(">")) {
+    mention = mention.slice(3, -1);
+
+    if (mention.startsWith("!")) {
+      mention = mention.slice(1);
+    }
+
+    return receivedMessage.guild.roles.cache.get(mention);
+  }
 }
 
 // Get your bot's secret token from:
