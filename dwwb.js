@@ -33,6 +33,10 @@ function processCommand(receivedMessage) {
     helpCommand(arguments, receivedMessage);
   } else if (primaryCommand == "vote") {
     voteCommand(arguments, receivedMessage);
+  } else if (primaryCommand == "idol") {
+    receivedMessage.channel.send("💯0% real", {
+      files: ["img/itsaneffingstick.jpg"],
+    });
   } else {
     receivedMessage.channel.send(
       "I don't understand the command. Try `!help`."
@@ -109,13 +113,25 @@ function voteCommand(mention, receivedMessage) {
     ];
     console.log("Member Size:" + membersWithRole.size);
     if (membersWithRole.size > 0) {
-      var i = 0;
+      var memberCount = 0;
       membersWithRole.forEach((member) => {
-        voteMessage =
-          voteMessage + reacts[i] + ":  " + member.displayName + "\n";
-        i++;
+        if (!member.user.bot) {
+          voteMessage =
+            voteMessage +
+            reacts[memberCount] +
+            ":  " +
+            member.displayName +
+            "\n";
+          memberCount++;
+        }
       });
-      sendVoteMessage(receivedMessage, voteMessage, reacts, i);
+      if (memberCount > 0) {
+        sendVoteMessage(receivedMessage, voteMessage, reacts, memberCount);
+      } else {
+        receivedMessage.channel.send(
+          `The role group <@&${roleMentioned.id}> has no humans, only bots.`
+        );
+      }
     } else {
       receivedMessage.channel.send(
         `There are no members of <@&${roleMentioned.id}>.`
