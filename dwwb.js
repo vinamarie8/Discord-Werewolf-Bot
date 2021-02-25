@@ -34,7 +34,9 @@ function processCommand(receivedMessage) {
   } else if (primaryCommand == "vote") {
     voteCommand(arguments, receivedMessage);
   } else {
-    receivedMessage.channel.send("I don't understand the command. Try `!help`");
+    receivedMessage.channel.send(
+      "I don't understand the command. Try `!help`."
+    );
   }
 }
 
@@ -56,12 +58,15 @@ function processCommandQuestion(receivedMessage) {
 
 function helpCommand(arguments, receivedMessage) {
   if (arguments.length > 0) {
-    receivedMessage.channel.send(
-      "It looks like you might need help with " + arguments
-    );
+    var helpMsg =
+      "It looks like you might need help with **" + arguments + "**.\n";
+    if (arguments == "vote") {
+      helpMsg = helpMsg + "`!vote @[role name]` to vote.";
+    }
+    receivedMessage.channel.send(helpMsg);
   } else {
     receivedMessage.channel.send(
-      "I'm not sure what you need help with. Try `!help [topic]`"
+      "DWWVD/Z Bot Commands:\n`!vote @[role name]` -- Start voting poll for all members with mentioned role."
     );
   }
 }
@@ -117,7 +122,7 @@ function voteCommand(mention, receivedMessage) {
     //receivedMessage.channel.send(roleMentioned.members[0]);
   } else {
     receivedMessage.channel.send(
-      "Role name required. Try '!vote @[role name]'"
+      "Role name required. Try `!vote @[role name]`."
     );
   }
 }
