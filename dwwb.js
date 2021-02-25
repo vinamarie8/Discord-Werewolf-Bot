@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
+const config = require("./config.json");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -183,10 +184,4 @@ function getRoleFromMention(mention, receivedMessage) {
   }
 }
 
-// Get your bot's secret token from:
-// https://discordapp.com/developers/applications/
-// Click on your application -> Bot -> Token -> "Click to Reveal Token"
-bot_secret_token =
-  "ODE0MzY2MTE1MzkxNDcxNjE2.YDczjA.tNpsA2SMUUhmqUKk74yxzy9QjMg";
-
-client.login(bot_secret_token);
+client.login(config.token);

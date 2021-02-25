@@ -1,4 +1,4 @@
-- Hide token to allow repository to be public - private text file, gitignore
+/- Hide token to allow repository to be public - private text file, gitignore
 - Restrict certain commands to be certain role only
 - Add custom poll
 - DWWVD nominations and voting
