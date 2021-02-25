@@ -1,5 +1,10 @@
+- Hide token to allow repository to be public - private text file, gitignore
 - Restrict certain commands to be certain role only
-- Allow only one reaction per user
-- Custom voting text
 - Add custom poll
 - DWWVD nominations and voting
+
+!vote
+- Custom voting text
+- Allow only one reaction per user
+- Graphical representation of votes
+- Only mentioned role members can vote?
