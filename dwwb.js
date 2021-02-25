@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const client = new Discord.Client();
+const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -107,7 +107,7 @@ function voteCommand(mention, receivedMessage) {
       "🇾",
       "🇿",
     ];
-
+    console.log("Member Size:" + membersWithRole.size);
     if (membersWithRole.size > 0) {
       var i = 0;
       membersWithRole.forEach((member) => {
@@ -149,6 +149,7 @@ function getRoleFromMention(mention, receivedMessage) {
     if (mention.startsWith("!")) {
       mention = mention.slice(1);
     }
+    console.log(mention);
 
     return receivedMessage.guild.roles.cache.get(mention);
   }
@@ -158,6 +159,6 @@ function getRoleFromMention(mention, receivedMessage) {
 // https://discordapp.com/developers/applications/
 // Click on your application -> Bot -> Token -> "Click to Reveal Token"
 bot_secret_token =
-  "ODE0MzY2MTE1MzkxNDcxNjE2.YDczjA.o7GVm-T0KczzeL2mfYqmAa0JKEs";
+  "ODE0MzY2MTE1MzkxNDcxNjE2.YDczjA.tNpsA2SMUUhmqUKk74yxzy9QjMg";
 
 client.login(bot_secret_token);
