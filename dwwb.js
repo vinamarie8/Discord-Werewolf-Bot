@@ -34,9 +34,9 @@ function processCommand(receivedMessage) {
   } else if (primaryCommand == "vote") {
     voteCommand(arguments, receivedMessage);
   } else if (primaryCommand == "idol") {
-    receivedMessage.channel.send("💯0% real", {
-      files: ["img/itsaneffingstick.jpg"],
-    });
+    sendImage(receivedMessage, primaryCommand, "💯0% real");
+  } else if (primaryCommand == "my" || primaryCommand == "if") {
+    sendImage(receivedMessage, primaryCommand, "");
   } else {
     receivedMessage.channel.send(
       "I don't understand the command. Try `!help`."
@@ -54,12 +54,17 @@ function processCommandQuestion(receivedMessage) {
   console.log("Arguments: " + arguments); // There may not be any arguments
 
   if (primaryCommand == "idol") {
-    receivedMessage.channel.send("💯0% real", {
-      files: ["img/itsaneffingstick.jpg"],
-    });
+    sendImage(receivedMessage, primaryCommand, "💯0% real");
   } else {
     receivedMessage.channel.send("I don't understand the command.");
   }
+}
+
+function sendImage(receivedMessage, primaryCommand, textMessage) {
+  let filePath = "img/" + primaryCommand + ".png";
+  receivedMessage.channel.send(textMessage, {
+    files: [filePath],
+  });
 }
 
 function helpCommand(arguments, receivedMessage) {
