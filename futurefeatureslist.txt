@@ -1,0 +1,5 @@
+- Moderator restrictions for commands
+- Allow only one reaction per user
+- DWWVD nominations and voting
+- Custom voting text
+- Add custom poll
