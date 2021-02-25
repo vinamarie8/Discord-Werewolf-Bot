@@ -32,7 +32,7 @@ function processCommand(receivedMessage) {
   if (primaryCommand == "help") {
     helpCommand(arguments, receivedMessage);
   } else if (primaryCommand == "vote") {
-    voteCommand(arguments, receivedMessage);
+    voteCommand(arguments, fullCommand, receivedMessage);
   } else if (primaryCommand == "idol") {
     sendImage(receivedMessage, primaryCommand, "💯0% real");
   } else if (primaryCommand == "my" || primaryCommand == "if") {
@@ -45,7 +45,7 @@ function processCommand(receivedMessage) {
 }
 
 function processCommandQuestion(receivedMessage) {
-  let fullCommand = receivedMessage.content.substr(1); // Remove the leading exclamation mark
+  let fullCommand = receivedMessage.content.substr(1); // Remove the leading question mark
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
   let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
@@ -72,22 +72,31 @@ function helpCommand(arguments, receivedMessage) {
     var helpMsg =
       "It looks like you might need help with **" + arguments + "**.\n";
     if (arguments == "vote") {
-      helpMsg = helpMsg + "`!vote @[role name]` to vote.";
+      helpMsg =
+        helpMsg + "`!vote @[role name] [optional: vote message]` to vote.";
     }
     receivedMessage.channel.send(helpMsg);
   } else {
     receivedMessage.channel.send(
-      "DWWVD/Z Bot Commands:\n`!vote @[role name]` -- Start voting poll for all members with mentioned role."
+      "DWWVD/Z Bot Commands:\n`!vote @[role name] [optional: vote message]` -- Start voting poll for all members with mentioned role."
     );
   }
 }
 
-function voteCommand(mention, receivedMessage) {
+function voteCommand(arguments, fullCommand, receivedMessage) {
+  const mention = arguments[0];
   const roleMentioned = getRoleFromMention(String(mention), receivedMessage);
 
   if (roleMentioned) {
+    let voteMessage = "It's time to vote!\n";
+
+    // Display custom vote message
+    let customVoteMessage = fullCommand.split("vote " + mention + " ");
+    if (customVoteMessage.length > 1) {
+      voteMessage = customVoteMessage[1] + "\n";
+    }
+
     let membersWithRole = roleMentioned.members;
-    let voteMessage = "It's time to vote!\n"; // TODO: allow custom message
     let reacts = [
       "🇦",
       "🇧",
@@ -170,8 +179,6 @@ function getRoleFromMention(mention, receivedMessage) {
     if (mention.startsWith("!")) {
       mention = mention.slice(1);
     }
-    console.log(mention);
-
     return receivedMessage.guild.roles.cache.get(mention);
   }
 }

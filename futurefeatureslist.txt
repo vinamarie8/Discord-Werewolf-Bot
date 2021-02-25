@@ -4,7 +4,10 @@
 - DWWVD nominations and voting
 
 !vote
-- Custom voting text
+/- Custom voting text
 - Allow only one reaction per user
 - Graphical representation of votes
 - Only mentioned role members can vote?
+
+nonsense fun stuff
+- randomize fake idol image
