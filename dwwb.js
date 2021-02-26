@@ -29,12 +29,13 @@ const reactsAlphabet = [
   "🇾",
   "🇿",
 ];
-const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
+const voteCommandHelp = "`!vote @[role name] [optional: Vote message]`";
 const ynCommandHelp = "`!yn [optional: Yes or no question]`";
 const voteCommandDesc =
-  " -- Start voting poll for all members with mentioned role.";
-const ynCommandDesc = " -- Start a Yes/No poll";
+  "Start voting poll for all members with mentioned role.";
+const ynCommandDesc = "Start a Yes/No poll";
 const availableCommands = "`vote`, `yn`";
+const embedColor = "#af5beb";
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -104,7 +105,9 @@ function processCommand(receivedMsg) {
 function helpCommand(receivedMsg, arguments) {
   if (arguments.length > 0) {
     var command = arguments[0];
-    var helpMsg = "How to use **" + command + "**:.\n";
+    var helpMsgTitle = "How to use `" + command + "`";
+    var helpMsg = "";
+    var commandFound = true;
     switch (command) {
       case "vote":
         helpMsg = helpMsg + voteCommandHelp;
@@ -113,21 +116,33 @@ function helpCommand(receivedMsg, arguments) {
         helpMsg = helpMsg + ynCommandHelp;
         break;
       default:
-        helpMsg = "`" + command + "` not recognized.\nTry " + availableCommands;
+        helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
+        commandFound = false;
+        receivedMsg.channel.send(helpMsg);
         break;
     }
 
-    receivedMsg.channel.send(helpMsg);
+    if (commandFound) {
+      const embed = new Discord.MessageEmbed()
+        .setColor(embedColor)
+        .setTitle(helpMsgTitle)
+        .setDescription(helpMsg);
+      receivedMsg.channel.send(embed);
+    }
   } else {
-    receivedMsg.channel.send(
-      "Try this:\n" +
-        voteCommandHelp +
+    const embed = new Discord.MessageEmbed()
+      .setColor(embedColor)
+      .setTitle("Commands")
+      .setDescription(
         voteCommandDesc +
-        "\n" +
-        ynCommandHelp +
-        ynCommandDesc +
-        "\n"
-    );
+          "\n" +
+          voteCommandHelp +
+          "\n\n" +
+          ynCommandDesc +
+          "\n" +
+          ynCommandHelp
+      );
+    receivedMsg.channel.send(embed);
   }
 }
 
@@ -136,12 +151,11 @@ function voteCommand(receivedMsg, arguments, fullCommand) {
   const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
 
   if (roleMentioned) {
-    let voteMsg = "It's time to vote!\n";
-
+    let voteMsgTitle = "It's time to vote!";
     // Display custom vote message
     let customVoteMsg = fullCommand.split("vote " + mention + " ");
     if (customVoteMsg.length > 1) {
-      voteMsg = customVoteMsg[1] + "\n";
+      voteMsgTitle = customVoteMsg[1];
     }
 
     let membersWithRole = roleMentioned.members;
@@ -150,14 +164,15 @@ function voteCommand(receivedMsg, arguments, fullCommand) {
     if (membersWithRole.size > 0) {
       // List all members with corresponding react
       var memberCount = 0;
+      var voteMsg = "";
       membersWithRole.forEach((member) => {
         if (!member.user.bot) {
           voteMsg =
             voteMsg +
             reactsAlphabet[memberCount] +
-            ":  " +
+            " " +
             member.displayName +
-            "\n";
+            "\n\n";
           memberCount++;
         }
       });
@@ -165,6 +180,7 @@ function voteCommand(receivedMsg, arguments, fullCommand) {
         sendMsgWithReacts(
           receivedMsg,
           voteMsg,
+          voteMsgTitle,
           reactsAlphabet,
           memberCount,
           "vote"
@@ -193,7 +209,7 @@ function yesNoCommand(receivedMsg, fullCommand) {
   if (customMsg.length > 1) {
     pollMsg = customMsg[1] + "\n";
   }
-  sendMsgWithReacts(receivedMsg, pollMsg, reactsYN, 2, "yn");
+  sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
 }
 //#endregion
 
@@ -208,16 +224,28 @@ function sendImg(receivedMsg, imageName, textMsg) {
   receivedMsg.channel.send(textMsg, {
     files: [filePath],
   });
+  /*const embed = new Discord.MessageEmbed()
+    .setColor(embedColor)
+    .attachFiles([filePath])
+    .setImage("attachment://" + imageName + ".png")
+    .setDescription(textMsg);
+  receivedMsg.channel.send(embed);*/
 }
 
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
+  sendMsgTitle,
   reacts,
   reactCount,
   primaryCommand
 ) {
-  const msg = await receivedMsg.channel.send(sendMsg);
+  const embed = new Discord.MessageEmbed()
+    .setColor(embedColor)
+    .setTitle(sendMsgTitle)
+    .setDescription(sendMsg);
+
+  const msg = await receivedMsg.channel.send(embed);
   if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
   for (var i = 0; i < reactCount; i++) {
     await msg.react(reacts[i]);
@@ -225,7 +253,6 @@ async function sendMsgWithReacts(
   if (primaryCommand == "vote") {
     await msg.react("☮️");
   }
-  console.log("msg with reacts");
 }
 
 function getRoleFromMention(mention, receivedMsg) {
@@ -238,6 +265,14 @@ function getRoleFromMention(mention, receivedMsg) {
     }
     return receivedMsg.guild.roles.cache.get(mention);
   }
+}
+
+function sendMsgEmbed(receivedMsg, title, sendMsg) {
+  const embed = new MessageEmbed()
+    .setTitle(title)
+    .setColor(embedColor)
+    .setDescription(sendMsg);
+  receivedMsg.channel.send(embed);
 }
 //#endregion
 
