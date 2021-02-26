@@ -41,17 +41,12 @@ client.on("message", (receivedMessage) => {
     return;
   }
 
-  if (receivedMessage.content.startsWith("!")) {
+  if (
+    receivedMessage.content.startsWith("!") ||
+    receivedMessage.content.startsWith("?")
+  ) {
     try {
       processCommand(receivedMessage);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  if (receivedMessage.content.startsWith("?")) {
-    try {
-      processCommandQuestion(receivedMessage);
     } catch (error) {
       console.error(error);
     }
@@ -59,6 +54,7 @@ client.on("message", (receivedMessage) => {
 });
 
 function processCommand(receivedMessage) {
+  let prefix = receivedMessage.content.charAt(0);
   let fullCommand = receivedMessage.content.substr(1); // Remove the leading exclamation mark
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
   let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
@@ -67,34 +63,31 @@ function processCommand(receivedMessage) {
   console.log("Command received: " + primaryCommand);
   console.log("Arguments: " + arguments); // There may not be any arguments
 
-  if (primaryCommand == "help") {
-    helpCommand(arguments, receivedMessage);
-  } else if (primaryCommand == "vote") {
-    voteCommand(arguments, fullCommand, receivedMessage);
-  } else if (primaryCommand == "idol") {
-    sendImage(receivedMessage, primaryCommand, "💯0% real");
-  } else if (primaryCommand == "my" || primaryCommand == "if") {
-    sendImage(receivedMessage, primaryCommand, "");
+  if (prefix == "?") {
+    if (primaryCommand == "idol") {
+      sendImage(receivedMessage, primaryCommand, "💯0% real");
+    }
   } else {
-    receivedMessage.channel.send(
-      "I don't understand the command. Try `!help`."
-    );
-  }
-}
-
-function processCommandQuestion(receivedMessage) {
-  let fullCommand = receivedMessage.content.substr(1); // Remove the leading question mark
-  let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
-  let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
-  let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
-
-  console.log("Command received: " + primaryCommand);
-  console.log("Arguments: " + arguments); // There may not be any arguments
-
-  if (primaryCommand == "idol") {
-    sendImage(receivedMessage, primaryCommand, "💯0% real");
-  } else {
-    receivedMessage.channel.send("I don't understand the command.");
+    switch (primaryCommand) {
+      case "help":
+        helpCommand(arguments, receivedMessage);
+        break;
+      case "vote":
+        voteCommand(arguments, fullCommand, receivedMessage);
+        break;
+      case "my":
+      case "if":
+        sendImage(receivedMessage, primaryCommand, "");
+        break;
+      case "idol":
+        sendImage(receivedMessage, primaryCommand, "💯0% real");
+        break;
+      default:
+        receivedMessage.channel.send(
+          "I don't understand the command. Try `!help`."
+        );
+        break;
+    }
   }
 }
 
