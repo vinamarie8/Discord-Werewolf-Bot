@@ -71,7 +71,7 @@ function processCommand(receivedMessage) {
 
   if (prefix == "?") {
     if (primaryCommand == "idol") {
-      sendImage(receivedMessage, primaryCommand, "💯0% real");
+      sendImageCommand(receivedMessage, primaryCommand, "💯0% real");
     }
   } else {
     switch (primaryCommand) {
@@ -86,10 +86,10 @@ function processCommand(receivedMessage) {
         break;
       case "my":
       case "if":
-        sendImage(receivedMessage, primaryCommand, "");
+        sendImageCommand(receivedMessage, primaryCommand, "");
         break;
       case "idol":
-        sendImage(receivedMessage, primaryCommand, "💯0% real");
+        sendImageCommand(receivedMessage, primaryCommand, "💯0% real");
         break;
       default:
         receivedMessage.channel.send(
@@ -100,28 +100,7 @@ function processCommand(receivedMessage) {
   }
 }
 
-function yesNoCommand(receivedMessage, fullCommand) {
-  let pollMessage = "Yes or No?";
-  let customMessage = fullCommand.split("yn ");
-  let reactsYN = ["👍", "👎"];
-  if (customMessage.length > 1) {
-    pollMessage = customMessage[1] + "\n";
-  }
-  sendMsgWithReacts(receivedMessage, pollMessage, reactsYN, 2, "yn");
-}
-
-function sendImage(receivedMessage, imageName, textMessage) {
-  if (imageName == "idol") {
-    const maxImageNumber = 6;
-    let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
-    imageName = imageName + imageNumber.toString();
-  }
-  let filePath = "img/" + imageName + ".png";
-  receivedMessage.channel.send(textMessage, {
-    files: [filePath],
-  });
-}
-
+//#region Command functions
 function helpCommand(receivedMessage, arguments) {
   if (arguments.length > 0) {
     var helpMsg = "How to use **" + arguments + "**:.\n";
@@ -169,6 +148,7 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
 
     console.log("Member Size:" + membersWithRole.size);
     if (membersWithRole.size > 0) {
+      // List all members with corresponding react
       var memberCount = 0;
       membersWithRole.forEach((member) => {
         if (!member.user.bot) {
@@ -206,6 +186,30 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
   }
 }
 
+function yesNoCommand(receivedMessage, fullCommand) {
+  let pollMessage = "Yes or No?";
+  let customMessage = fullCommand.split("yn ");
+  let reactsYN = ["👍", "👎"];
+  if (customMessage.length > 1) {
+    pollMessage = customMessage[1] + "\n";
+  }
+  sendMsgWithReacts(receivedMessage, pollMessage, reactsYN, 2, "yn");
+}
+
+function sendImageCommand(receivedMessage, imageName, textMessage) {
+  if (imageName == "idol") {
+    const maxImageNumber = 6;
+    let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
+    imageName = imageName + imageNumber.toString();
+  }
+  let filePath = "img/" + imageName + ".png";
+  receivedMessage.channel.send(textMessage, {
+    files: [filePath],
+  });
+}
+//#endregion
+
+//#region Helper functions
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
@@ -235,5 +239,6 @@ function getRoleFromMention(mention, receivedMessage) {
     return receivedMessage.guild.roles.cache.get(mention);
   }
 }
+//#endregion
 
 client.login(config.token);
