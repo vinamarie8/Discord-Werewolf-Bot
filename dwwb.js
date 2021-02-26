@@ -41,27 +41,27 @@ client.on("ready", () => {
   client.user.setActivity("!help", { type: "PLAYING" });
 });
 
-client.on("message", (receivedMessage) => {
+client.on("message", (receivedMsg) => {
   // Prevent bot from responding to its own messages
-  if (receivedMessage.author == client.user) {
+  if (receivedMsg.author == client.user) {
     return;
   }
 
   if (
-    receivedMessage.content.startsWith("!") ||
-    receivedMessage.content.startsWith("?")
+    receivedMsg.content.startsWith("!") ||
+    receivedMsg.content.startsWith("?")
   ) {
     try {
-      processCommand(receivedMessage);
+      processCommand(receivedMsg);
     } catch (error) {
       console.error(error);
     }
   }
 });
 
-function processCommand(receivedMessage) {
-  let prefix = receivedMessage.content.charAt(0);
-  let fullCommand = receivedMessage.content.substr(1); // Remove the leading exclamation mark
+function processCommand(receivedMsg) {
+  let prefix = receivedMsg.content.charAt(0);
+  let fullCommand = receivedMsg.content.substr(1); // Remove the leading exclamation mark
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
   let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
@@ -71,28 +71,28 @@ function processCommand(receivedMessage) {
 
   if (prefix == "?") {
     if (primaryCommand == "idol") {
-      sendImg(receivedMessage, primaryCommand, "💯0% real");
+      sendImg(receivedMsg, primaryCommand, "💯0% real");
     }
   } else {
     switch (primaryCommand) {
       case "help":
-        helpCommand(receivedMessage, arguments);
+        helpCommand(receivedMsg, arguments);
         break;
       case "vote":
-        voteCommand(receivedMessage, arguments, fullCommand);
+        voteCommand(receivedMsg, arguments, fullCommand);
         break;
       case "yn":
-        yesNoCommand(receivedMessage, fullCommand);
+        yesNoCommand(receivedMsg, fullCommand);
         break;
       case "my":
       case "if":
-        sendImg(receivedMessage, primaryCommand, "");
+        sendImg(receivedMsg, primaryCommand, "");
         break;
       case "idol":
-        sendImg(receivedMessage, primaryCommand, "💯0% real");
+        sendImg(receivedMsg, primaryCommand, "💯0% real");
         break;
       default:
-        receivedMessage.channel.send(
+        receivedMsg.channel.send(
           "I don't understand the command. Try `!help`."
         );
         break;
@@ -101,7 +101,7 @@ function processCommand(receivedMessage) {
 }
 
 //#region Command functions
-function helpCommand(receivedMessage, arguments) {
+function helpCommand(receivedMsg, arguments) {
   if (arguments.length > 0) {
     var command = arguments[0];
     var helpMsg = "How to use **" + command + "**:.\n";
@@ -117,9 +117,9 @@ function helpCommand(receivedMessage, arguments) {
         break;
     }
 
-    receivedMessage.channel.send(helpMsg);
+    receivedMsg.channel.send(helpMsg);
   } else {
-    receivedMessage.channel.send(
+    receivedMsg.channel.send(
       "Try this:\n" +
         voteCommandHelp +
         voteCommandDesc +
@@ -131,17 +131,17 @@ function helpCommand(receivedMessage, arguments) {
   }
 }
 
-function voteCommand(receivedMessage, arguments, fullCommand) {
+function voteCommand(receivedMsg, arguments, fullCommand) {
   const mention = arguments[0];
-  const roleMentioned = getRoleFromMention(String(mention), receivedMessage);
+  const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
 
   if (roleMentioned) {
-    let voteMessage = "It's time to vote!\n";
+    let voteMsg = "It's time to vote!\n";
 
     // Display custom vote message
-    let customVoteMessage = fullCommand.split("vote " + mention + " ");
-    if (customVoteMessage.length > 1) {
-      voteMessage = customVoteMessage[1] + "\n";
+    let customVoteMsg = fullCommand.split("vote " + mention + " ");
+    if (customVoteMsg.length > 1) {
+      voteMsg = customVoteMsg[1] + "\n";
     }
 
     let membersWithRole = roleMentioned.members;
@@ -152,8 +152,8 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
       var memberCount = 0;
       membersWithRole.forEach((member) => {
         if (!member.user.bot) {
-          voteMessage =
-            voteMessage +
+          voteMsg =
+            voteMsg +
             reactsAlphabet[memberCount] +
             ":  " +
             member.displayName +
@@ -163,49 +163,49 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
       });
       if (memberCount > 0) {
         sendMsgWithReacts(
-          receivedMessage,
-          voteMessage,
+          receivedMsg,
+          voteMsg,
           reactsAlphabet,
           memberCount,
           "vote"
         );
       } else {
-        receivedMessage.channel.send(
+        receivedMsg.channel.send(
           `The role group <@&${roleMentioned.id}> has no humans, only bots.`
         );
       }
     } else {
-      receivedMessage.channel.send(
+      receivedMsg.channel.send(
         `There are no members of <@&${roleMentioned.id}>.`
       );
     }
   } else {
-    receivedMessage.channel.send(
+    receivedMsg.channel.send(
       "Role name required. Try " + voteCommandHelp + "."
     );
   }
 }
 
-function yesNoCommand(receivedMessage, fullCommand) {
-  let pollMessage = "Yes or No?";
-  let customMessage = fullCommand.split("yn ");
+function yesNoCommand(receivedMsg, fullCommand) {
+  let pollMsg = "Yes or No?";
+  let customMsg = fullCommand.split("yn ");
   let reactsYN = ["👍", "👎"];
-  if (customMessage.length > 1) {
-    pollMessage = customMessage[1] + "\n";
+  if (customMsg.length > 1) {
+    pollMsg = customMsg[1] + "\n";
   }
-  sendMsgWithReacts(receivedMessage, pollMessage, reactsYN, 2, "yn");
+  sendMsgWithReacts(receivedMsg, pollMsg, reactsYN, 2, "yn");
 }
 //#endregion
 
 //#region Helper functions
-function sendImg(receivedMessage, imageName, textMessage) {
+function sendImg(receivedMsg, imageName, textMsg) {
   if (imageName == "idol") {
     const maxImageNumber = 6;
     let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
     imageName = imageName + imageNumber.toString();
   }
   let filePath = "img/" + imageName + ".png";
-  receivedMessage.channel.send(textMessage, {
+  receivedMsg.channel.send(textMsg, {
     files: [filePath],
   });
 }
@@ -228,7 +228,7 @@ async function sendMsgWithReacts(
   console.log("msg with reacts");
 }
 
-function getRoleFromMention(mention, receivedMessage) {
+function getRoleFromMention(mention, receivedMsg) {
   if (!mention) return;
   if (mention.startsWith("<@&") && mention.endsWith(">")) {
     mention = mention.slice(3, -1);
@@ -236,7 +236,7 @@ function getRoleFromMention(mention, receivedMessage) {
     if (mention.startsWith("!")) {
       mention = mention.slice(1);
     }
-    return receivedMessage.guild.roles.cache.get(mention);
+    return receivedMsg.guild.roles.cache.get(mention);
   }
 }
 //#endregion
