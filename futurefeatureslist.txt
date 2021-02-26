@@ -1,13 +1,14 @@
 /- Hide token to allow repository to be public - private text file, gitignore
 - Restrict certain commands to be certain role only
 - Add custom poll
+- y/n poll
 - DWWVD nominations and voting
 
 !vote
 /- Custom voting text
 - Allow only one reaction per user
 - Graphical representation of votes
-- Only mentioned role members can vote?
+- Only mentioned role members can vote? (sorry ghosties)
 
 nonsense fun stuff
 - randomize fake idol image
