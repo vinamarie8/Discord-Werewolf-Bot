@@ -70,10 +70,10 @@ function processCommand(receivedMessage) {
   } else {
     switch (primaryCommand) {
       case "help":
-        helpCommand(arguments, receivedMessage);
+        helpCommand(receivedMessage, arguments);
         break;
       case "vote":
-        voteCommand(arguments, fullCommand, receivedMessage);
+        voteCommand(receivedMessage, arguments, fullCommand);
         break;
       case "my":
       case "if":
@@ -103,13 +103,11 @@ function sendImage(receivedMessage, imageName, textMessage) {
   });
 }
 
-function helpCommand(arguments, receivedMessage) {
+function helpCommand(receivedMessage, arguments) {
   if (arguments.length > 0) {
-    var helpMsg =
-      "It looks like you might need help with **" + arguments + "**.\n";
+    var helpMsg = "How to use **" + arguments + "**:.\n";
     if (arguments == "vote") {
-      helpMsg =
-        helpMsg + "`!vote @[role name] [optional: vote message]` to vote.";
+      helpMsg = helpMsg + "`!vote @[role name] [optional: vote message]`";
     }
     receivedMessage.channel.send(helpMsg);
   } else {
@@ -119,7 +117,7 @@ function helpCommand(arguments, receivedMessage) {
   }
 }
 
-function voteCommand(arguments, fullCommand, receivedMessage) {
+function voteCommand(receivedMessage, arguments, fullCommand) {
   const mention = arguments[0];
   const roleMentioned = getRoleFromMention(String(mention), receivedMessage);
 
