@@ -1,6 +1,34 @@
 const Discord = require("discord.js");
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 const config = require("./config.json");
+const reacts = [
+  "🇦",
+  "🇧",
+  "🇨",
+  "🇩",
+  "🇪",
+  "🇫",
+  "🇬",
+  "🇭",
+  "🇮",
+  "🇯",
+  "🇰",
+  "🇱",
+  "🇲",
+  "🇳",
+  "🇴",
+  "🇵",
+  "🇶",
+  "🇷",
+  "🇸",
+  "🇹",
+  "🇺",
+  "🇻",
+  "🇼",
+  "🇽",
+  "🇾",
+  "🇿",
+];
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -107,34 +135,7 @@ function voteCommand(arguments, fullCommand, receivedMessage) {
     }
 
     let membersWithRole = roleMentioned.members;
-    let reacts = [
-      "🇦",
-      "🇧",
-      "🇨",
-      "🇩",
-      "🇪",
-      "🇫",
-      "🇬",
-      "🇭",
-      "🇮",
-      "🇯",
-      "🇰",
-      "🇱",
-      "🇲",
-      "🇳",
-      "🇴",
-      "🇵",
-      "🇶",
-      "🇷",
-      "🇸",
-      "🇹",
-      "🇺",
-      "🇻",
-      "🇼",
-      "🇽",
-      "🇾",
-      "🇿",
-    ];
+
     console.log("Member Size:" + membersWithRole.size);
     if (membersWithRole.size > 0) {
       var memberCount = 0;
@@ -175,6 +176,7 @@ async function sendVoteMessage(
   reactCount
 ) {
   const msg = await receivedMessage.channel.send(voteMessage);
+  if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
   for (var i = 0; i < reactCount; i++) {
     await msg.react(reacts[i]);
   }
