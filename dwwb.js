@@ -71,7 +71,7 @@ function processCommand(receivedMessage) {
 
   if (prefix == "?") {
     if (primaryCommand == "idol") {
-      sendImageCommand(receivedMessage, primaryCommand, "💯0% real");
+      sendImg(receivedMessage, primaryCommand, "💯0% real");
     }
   } else {
     switch (primaryCommand) {
@@ -86,10 +86,10 @@ function processCommand(receivedMessage) {
         break;
       case "my":
       case "if":
-        sendImageCommand(receivedMessage, primaryCommand, "");
+        sendImg(receivedMessage, primaryCommand, "");
         break;
       case "idol":
-        sendImageCommand(receivedMessage, primaryCommand, "💯0% real");
+        sendImg(receivedMessage, primaryCommand, "💯0% real");
         break;
       default:
         receivedMessage.channel.send(
@@ -103,8 +103,9 @@ function processCommand(receivedMessage) {
 //#region Command functions
 function helpCommand(receivedMessage, arguments) {
   if (arguments.length > 0) {
-    var helpMsg = "How to use **" + arguments + "**:.\n";
-    switch (arguments.toString()) {
+    var command = arguments[0];
+    var helpMsg = "How to use **" + command + "**:.\n";
+    switch (command) {
       case "vote":
         helpMsg = helpMsg + voteCommandHelp;
         break;
@@ -112,8 +113,7 @@ function helpCommand(receivedMessage, arguments) {
         helpMsg = helpMsg + ynCommandHelp;
         break;
       default:
-        helpMsg =
-          "`" + arguments + "` not recognized.\nTry " + availableCommands;
+        helpMsg = "`" + command + "` not recognized.\nTry " + availableCommands;
         break;
     }
 
@@ -195,8 +195,10 @@ function yesNoCommand(receivedMessage, fullCommand) {
   }
   sendMsgWithReacts(receivedMessage, pollMessage, reactsYN, 2, "yn");
 }
+//#endregion
 
-function sendImageCommand(receivedMessage, imageName, textMessage) {
+//#region Helper functions
+function sendImg(receivedMessage, imageName, textMessage) {
   if (imageName == "idol") {
     const maxImageNumber = 6;
     let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
@@ -207,9 +209,7 @@ function sendImageCommand(receivedMessage, imageName, textMessage) {
     files: [filePath],
   });
 }
-//#endregion
 
-//#region Helper functions
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
