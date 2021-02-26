@@ -30,12 +30,16 @@ const reactsAlphabet = [
   "🇿",
 ];
 const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
-const ynCommandHelp = "`!yn [yes or no question]`";
 const voteCommandDesc =
   "Start voting poll for all members with mentioned role.";
+const ynCommandHelp = "`!yn [yes or no question]`";
 const ynCommandDesc = "Start a Yes/No poll";
-const availableCommands = "`vote`, `yn`";
+const randomNumberCommandHelp = "`!random [number]` or `!number [number]`";
+const randomNumberCommandDesc =
+  "Get random number between 1 and number specified";
+const availableCommands = "`vote`, `yn`, `random`, `number`";
 const embedColor = "#c09edb";
+const maxImageNumber = 6;
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -92,6 +96,10 @@ function processCommand(receivedMsg) {
       case "idol":
         sendImg(receivedMsg, primaryCommand, "💯0% real");
         break;
+      case "random":
+      case "number":
+        randomNumberCommand(receivedMsg, arguments);
+        break;
       default:
         break;
     }
@@ -112,6 +120,10 @@ function helpCommand(receivedMsg, arguments) {
       case "yn":
         helpMsg = helpMsg + ynCommandHelp;
         break;
+      case "random":
+      case "number":
+        helpMsg = helpMsg + randomNumberCommandHelp;
+        break;
       default:
         helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
         commandFound = false;
@@ -130,7 +142,11 @@ function helpCommand(receivedMsg, arguments) {
       "\n\n" +
       ynCommandDesc +
       "\n" +
-      ynCommandHelp;
+      ynCommandHelp +
+      "\n\n" +
+      randomNumberCommandDesc +
+      "\n" +
+      randomNumberCommandHelp;
     sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
 }
@@ -197,19 +213,33 @@ function yesNoCommand(receivedMsg, fullCommand) {
   }
   sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
 }
+
+function randomNumberCommand(receivedMsg, arguments) {
+  let maxNum = 20;
+  if (arguments.length > 0) {
+    maxNum = arguments[0];
+  }
+  let randomNumTitle = "Random number between 1 and " + maxNum;
+  let randomNum = getRandomNumber(maxNum);
+  sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
+}
 //#endregion
 
 //#region Helper functions
 function sendImg(receivedMsg, imageName, textMsg) {
   if (imageName == "idol") {
-    const maxImageNumber = 6;
-    let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
+    imageNumber = getRandomNumber(maxImageNumber);
     imageName = imageName + imageNumber.toString();
   }
   let filePath = "img/" + imageName + ".png";
   receivedMsg.channel.send(textMsg, {
     files: [filePath],
   });
+}
+
+function getRandomNumber(maxNumber) {
+  //Returns a number between 1 and maxNumber
+  return (randomNumber = Math.floor(Math.random() * maxNumber) + 1);
 }
 
 async function sendMsgWithReacts(
