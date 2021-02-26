@@ -6,8 +6,8 @@
 
 !vote
 /- Custom voting text
-- Allow only one reaction per user
-- Graphical representation of votes
+- Allow only one reaction per user? (could affect performance)
+- Graphical representation of votes? (could affect performance)
 - Only mentioned role members can vote? (sorry ghosties)
 
 nonsense fun stuff
