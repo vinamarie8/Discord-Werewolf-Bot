@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 const config = require("./config.json");
-const reacts = [
+const reactsAlphabet = [
   "🇦",
   "🇧",
   "🇨",
@@ -34,6 +34,7 @@ const ynCommandHelp = "`!yn [optional: Yes or no question]`";
 const voteCommandDesc =
   " -- Start voting poll for all members with mentioned role.";
 const ynCommandDesc = " -- Start a Yes/No poll";
+const availableCommands = "`vote`, `yn`";
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -102,16 +103,11 @@ function processCommand(receivedMessage) {
 function yesNoCommand(receivedMessage, fullCommand) {
   let pollMessage = "Yes or No?";
   let customMessage = fullCommand.split("yn ");
+  let reactsYN = ["👍", "👎"];
   if (customMessage.length > 1) {
     pollMessage = customMessage[1] + "\n";
   }
-  sendYesNoMessage(receivedMessage, pollMessage);
-}
-
-async function sendYesNoMessage(receivedMessage, pollMessage) {
-  const msg = await receivedMessage.channel.send(pollMessage);
-  await msg.react("👍");
-  await msg.react("👎");
+  sendMsgWithReacts(receivedMessage, pollMessage, reactsYN, 2, "yn");
 }
 
 function sendImage(receivedMessage, imageName, textMessage) {
@@ -137,7 +133,8 @@ function helpCommand(receivedMessage, arguments) {
         helpMsg = helpMsg + ynCommandHelp;
         break;
       default:
-        helpMsg = "`" + arguments + "` not recognized.\nTry `vote`, `yn`";
+        helpMsg =
+          "`" + arguments + "` not recognized.\nTry " + availableCommands;
         break;
     }
 
@@ -177,7 +174,7 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
         if (!member.user.bot) {
           voteMessage =
             voteMessage +
-            reacts[memberCount] +
+            reactsAlphabet[memberCount] +
             ":  " +
             member.displayName +
             "\n";
@@ -185,7 +182,13 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
         }
       });
       if (memberCount > 0) {
-        sendVoteMessage(receivedMessage, voteMessage, reacts, memberCount);
+        sendMsgWithReacts(
+          receivedMessage,
+          voteMessage,
+          reactsAlphabet,
+          memberCount,
+          "vote"
+        );
       } else {
         receivedMessage.channel.send(
           `The role group <@&${roleMentioned.id}> has no humans, only bots.`
@@ -203,18 +206,22 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
   }
 }
 
-async function sendVoteMessage(
-  receivedMessage,
-  voteMessage,
+async function sendMsgWithReacts(
+  receivedMsg,
+  sendMsg,
   reacts,
-  reactCount
+  reactCount,
+  primaryCommand
 ) {
-  const msg = await receivedMessage.channel.send(voteMessage);
+  const msg = await receivedMsg.channel.send(sendMsg);
   if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
   for (var i = 0; i < reactCount; i++) {
     await msg.react(reacts[i]);
   }
-  await msg.react("☮️");
+  if (primaryCommand == "vote") {
+    await msg.react("☮️");
+  }
+  console.log("msg with reacts");
 }
 
 function getRoleFromMention(mention, receivedMessage) {
