@@ -29,6 +29,11 @@ const reacts = [
   "🇾",
   "🇿",
 ];
+const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
+const ynCommandHelp = "`!yn [optional: Yes or no question]`";
+const voteCommandDesc =
+  " -- Start voting poll for all members with mentioned role.";
+const ynCommandDesc = " -- Start a Yes/No poll";
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -75,6 +80,9 @@ function processCommand(receivedMessage) {
       case "vote":
         voteCommand(receivedMessage, arguments, fullCommand);
         break;
+      case "yn":
+        yesNoCommand(receivedMessage, fullCommand);
+        break;
       case "my":
       case "if":
         sendImage(receivedMessage, primaryCommand, "");
@@ -89,6 +97,21 @@ function processCommand(receivedMessage) {
         break;
     }
   }
+}
+
+function yesNoCommand(receivedMessage, fullCommand) {
+  let pollMessage = "Yes or No?";
+  let customMessage = fullCommand.split("yn ");
+  if (customMessage.length > 1) {
+    pollMessage = customMessage[1] + "\n";
+  }
+  sendYesNoMessage(receivedMessage, pollMessage);
+}
+
+async function sendYesNoMessage(receivedMessage, pollMessage) {
+  const msg = await receivedMessage.channel.send(pollMessage);
+  await msg.react("👍");
+  await msg.react("👎");
 }
 
 function sendImage(receivedMessage, imageName, textMessage) {
@@ -106,13 +129,28 @@ function sendImage(receivedMessage, imageName, textMessage) {
 function helpCommand(receivedMessage, arguments) {
   if (arguments.length > 0) {
     var helpMsg = "How to use **" + arguments + "**:.\n";
-    if (arguments == "vote") {
-      helpMsg = helpMsg + "`!vote @[role name] [optional: vote message]`";
+    switch (arguments.toString()) {
+      case "vote":
+        helpMsg = helpMsg + voteCommandHelp;
+        break;
+      case "yn":
+        helpMsg = helpMsg + ynCommandHelp;
+        break;
+      default:
+        helpMsg = "`" + arguments + "` not recognized.\nTry `vote`, `yn`";
+        break;
     }
+
     receivedMessage.channel.send(helpMsg);
   } else {
     receivedMessage.channel.send(
-      "Try this:\n`!vote @[role name] [optional: vote message]` -- Start voting poll for all members with mentioned role."
+      "Try this:\n" +
+        voteCommandHelp +
+        voteCommandDesc +
+        "\n" +
+        ynCommandHelp +
+        ynCommandDesc +
+        "\n"
     );
   }
 }
@@ -160,7 +198,7 @@ function voteCommand(receivedMessage, arguments, fullCommand) {
     }
   } else {
     receivedMessage.channel.send(
-      "Role name required. Try `!vote @[role name]`."
+      "Role name required. Try " + voteCommandHelp + "."
     );
   }
 }
