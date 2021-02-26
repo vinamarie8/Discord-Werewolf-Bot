@@ -29,13 +29,13 @@ const reactsAlphabet = [
   "🇾",
   "🇿",
 ];
-const voteCommandHelp = "`!vote @[role name] [optional: Vote message]`";
-const ynCommandHelp = "`!yn [optional: Yes or no question]`";
+const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
+const ynCommandHelp = "`!yn [yes or no question]`";
 const voteCommandDesc =
   "Start voting poll for all members with mentioned role.";
 const ynCommandDesc = "Start a Yes/No poll";
 const availableCommands = "`vote`, `yn`";
-const embedColor = "#af5beb";
+const embedColor = "#c09edb";
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -93,9 +93,6 @@ function processCommand(receivedMsg) {
         sendImg(receivedMsg, primaryCommand, "💯0% real");
         break;
       default:
-        receivedMsg.channel.send(
-          "I don't understand the command. Try `!help`."
-        );
         break;
     }
   }
@@ -268,6 +265,7 @@ function getRoleFromMention(mention, receivedMsg) {
 }
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
+  // TODO use this function for embed messages
   const embed = new MessageEmbed()
     .setTitle(title)
     .setColor(embedColor)

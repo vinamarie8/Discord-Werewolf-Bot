@@ -1,7 +1,17 @@
 /- Hide token to allow repository to be public - private text file, gitignore
-- Restrict certain commands to be certain role only
-- Add custom poll
 /- y/n poll
+
+CLEANUP
+- use sendMsgEmbed
+
+Permissions
+- Restrict certain commands to be certain role only
+- Send message to user who sent mesage about permissions if error thrown
+
+New commands
+- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
+- Custom poll -- !poll question|choice a|choice b|choice c
+- Custom poll with custom reacts -- !pollReacts question|choice a:react a|choice b:react b
 - DWWVD nominations and voting
 
 !vote
@@ -10,5 +20,5 @@
 - Graphical representation of votes? (could affect performance)
 - Only mentioned role members can vote? (sorry ghosties)
 
-nonsense fun stuff
+Nonsense fun stuff
 /- randomize fake idol image
