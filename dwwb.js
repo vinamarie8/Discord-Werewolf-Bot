@@ -91,8 +91,13 @@ function processCommand(receivedMessage) {
   }
 }
 
-function sendImage(receivedMessage, primaryCommand, textMessage) {
-  let filePath = "img/" + primaryCommand + ".png";
+function sendImage(receivedMessage, imageName, textMessage) {
+  if (imageName == "idol") {
+    const maxImageNumber = 6;
+    let imageNumber = Math.floor(Math.random() * maxImageNumber) + 1;
+    imageName = imageName + imageNumber.toString();
+  }
+  let filePath = "img/" + imageName + ".png";
   receivedMessage.channel.send(textMessage, {
     files: [filePath],
   });
