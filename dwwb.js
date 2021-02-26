@@ -4,6 +4,7 @@ const config = require("./config.json");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
+  client.user.setActivity("!help", { type: "PLAYING" });
 });
 
 client.on("message", (receivedMessage) => {
@@ -13,11 +14,19 @@ client.on("message", (receivedMessage) => {
   }
 
   if (receivedMessage.content.startsWith("!")) {
-    processCommand(receivedMessage);
+    try {
+      processCommand(receivedMessage);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (receivedMessage.content.startsWith("?")) {
-    processCommandQuestion(receivedMessage);
+    try {
+      processCommandQuestion(receivedMessage);
+    } catch (error) {
+      console.error(error);
+    }
   }
 });
 
@@ -79,7 +88,7 @@ function helpCommand(arguments, receivedMessage) {
     receivedMessage.channel.send(helpMsg);
   } else {
     receivedMessage.channel.send(
-      "DWWVD/Z Bot Commands:\n`!vote @[role name] [optional: vote message]` -- Start voting poll for all members with mentioned role."
+      "Try this:\n`!vote @[role name] [optional: vote message]` -- Start voting poll for all members with mentioned role."
     );
   }
 }
