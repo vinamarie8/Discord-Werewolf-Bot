@@ -115,37 +115,30 @@ function helpCommand(receivedMsg, arguments) {
       default:
         helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
         commandFound = false;
-        receivedMsg.channel.send(helpMsg);
+        sendMsg(receivedMsg, helpMsg);
         break;
     }
 
     if (commandFound) {
-      const embed = new Discord.MessageEmbed()
-        .setColor(embedColor)
-        .setTitle(helpMsgTitle)
-        .setDescription(helpMsg);
-      receivedMsg.channel.send(embed);
+      sendMsgEmbed(receivedMsg, helpMsgTitle, helpMsg);
     }
   } else {
-    const embed = new Discord.MessageEmbed()
-      .setColor(embedColor)
-      .setTitle("Commands")
-      .setDescription(
-        voteCommandDesc +
-          "\n" +
-          voteCommandHelp +
-          "\n\n" +
-          ynCommandDesc +
-          "\n" +
-          ynCommandHelp
-      );
-    receivedMsg.channel.send(embed);
+    let fullHelpMsg =
+      voteCommandDesc +
+      "\n" +
+      voteCommandHelp +
+      "\n\n" +
+      ynCommandDesc +
+      "\n" +
+      ynCommandHelp;
+    sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
 }
 
 function voteCommand(receivedMsg, arguments, fullCommand) {
   const mention = arguments[0];
   const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
+  let errMsg = "";
 
   if (roleMentioned) {
     let voteMsgTitle = "It's time to vote!";
@@ -183,20 +176,16 @@ function voteCommand(receivedMsg, arguments, fullCommand) {
           "vote"
         );
       } else {
-        receivedMsg.channel.send(
-          `The role group <@&${roleMentioned.id}> has no humans, only bots.`
-        );
+        errMsg = `The role group <@&${roleMentioned.id}> has no humans, only bots.`;
       }
     } else {
-      receivedMsg.channel.send(
-        `There are no members of <@&${roleMentioned.id}>.`
-      );
+      errMsg = `There are no members of <@&${roleMentioned.id}>.`;
     }
   } else {
-    receivedMsg.channel.send(
-      "Role name required. Try " + voteCommandHelp + "."
-    );
+    errMsg = "Role name required. Try " + voteCommandHelp + ".";
   }
+
+  if (errMsg != "") sendMsg(receivedMsg, errMsg);
 }
 
 function yesNoCommand(receivedMsg, fullCommand) {
@@ -221,12 +210,6 @@ function sendImg(receivedMsg, imageName, textMsg) {
   receivedMsg.channel.send(textMsg, {
     files: [filePath],
   });
-  /*const embed = new Discord.MessageEmbed()
-    .setColor(embedColor)
-    .attachFiles([filePath])
-    .setImage("attachment://" + imageName + ".png")
-    .setDescription(textMsg);
-  receivedMsg.channel.send(embed);*/
 }
 
 async function sendMsgWithReacts(
@@ -237,12 +220,7 @@ async function sendMsgWithReacts(
   reactCount,
   primaryCommand
 ) {
-  const embed = new Discord.MessageEmbed()
-    .setColor(embedColor)
-    .setTitle(sendMsgTitle)
-    .setDescription(sendMsg);
-
-  const msg = await receivedMsg.channel.send(embed);
+  const msg = await sendMsgEmbed(receivedMsg, sendMsgTitle, sendMsg);
   if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
   for (var i = 0; i < reactCount; i++) {
     await msg.react(reacts[i]);
@@ -265,12 +243,15 @@ function getRoleFromMention(mention, receivedMsg) {
 }
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
-  // TODO use this function for embed messages
-  const embed = new MessageEmbed()
+  const embed = new Discord.MessageEmbed()
     .setTitle(title)
     .setColor(embedColor)
     .setDescription(sendMsg);
-  receivedMsg.channel.send(embed);
+  return receivedMsg.channel.send(embed);
+}
+
+function sendMsg(receivedMsg, sendMsg) {
+  receivedMsg.channel.send(sendMsg);
 }
 //#endregion
 

@@ -1,9 +1,6 @@
 /- Hide token to allow repository to be public - private text file, gitignore
 /- y/n poll
 
-CLEANUP
-- use sendMsgEmbed
-
 Permissions
 - Restrict certain commands to be certain role only
 - Send message to user who sent mesage about permissions if error thrown
