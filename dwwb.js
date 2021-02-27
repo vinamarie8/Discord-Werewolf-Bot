@@ -32,6 +32,8 @@ const reactsAlphabet = [
 const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
 const voteCommandDesc =
   "Start voting poll for all members with mentioned role.";
+const wheelCommandHelp = "`!wheel @[role name] [optional: wheel message]`";
+const wheelCommandDesc = "Randomly chooses a player of mentioned role";
 const ynCommandHelp = "`!yn [yes or no question]`";
 const ynCommandDesc = "Start a Yes/No poll";
 const randomNumberCommandHelp = "`!random [number]` or `!number [number]`";
@@ -86,6 +88,9 @@ function processCommand(receivedMsg) {
       case "vote":
         voteCommand(receivedMsg, arguments, fullCommand);
         break;
+      case "wheel":
+        wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand);
+        break;
       case "yn":
         yesNoCommand(receivedMsg, fullCommand);
         break;
@@ -117,6 +122,9 @@ function helpCommand(receivedMsg, arguments) {
       case "vote":
         helpMsg = helpMsg + voteCommandHelp;
         break;
+      case "wheel":
+        helpMsg = helpMsg + wheelCommandHelp;
+        break;
       case "yn":
         helpMsg = helpMsg + ynCommandHelp;
         break;
@@ -139,6 +147,10 @@ function helpCommand(receivedMsg, arguments) {
       voteCommandDesc +
       "\n" +
       voteCommandHelp +
+      "\n\n" +
+      wheelCommandDesc +
+      "\n" +
+      wheelCommandHelp +
       "\n\n" +
       ynCommandDesc +
       "\n" +
@@ -204,6 +216,53 @@ function voteCommand(receivedMsg, arguments, fullCommand) {
   if (errMsg != "") sendMsg(receivedMsg, errMsg);
 }
 
+function wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
+  let wheelTitle = "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡";
+  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, wheelTitle);
+}
+
+function roleCommand(
+  receivedMsg,
+  arguments,
+  primaryCommand,
+  fullCommand,
+  msgTitle
+) {
+  const mention = arguments[0];
+  const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
+  let errMsg = "";
+
+  if (roleMentioned) {
+    let membersWithRole = roleMentioned.members;
+    if (membersWithRole.size > 0) {
+      let members = roleMentioned.members.filter((member) => !member.user.bot);
+      if (members.size > 0) {
+        let membersArray = members.array();
+        msgTitle = getCustomMsg(msgTitle, primaryCommand, fullCommand, mention);
+        switch (primaryCommand) {
+          case "wheel":
+            let memberIndex = getRandomNumber(members.size) - 1;
+            let chosenMember = membersArray[memberIndex];
+            let msg =
+              "**" +
+              chosenMember.displayName +
+              "** has been chosen by the wheel!";
+            sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
+            break;
+        }
+      } else {
+        errMsg = `The role group <@&${roleMentioned.id}> has no humans, only bots.`;
+      }
+    } else {
+      errMsg = `There are no members of <@&${roleMentioned.id}>.`;
+    }
+  } else {
+    errMsg = "Role name required. Try " + voteCommandHelp + ".";
+  }
+
+  if (errMsg != "") sendMsg(receivedMsg, errMsg);
+}
+
 function yesNoCommand(receivedMsg, fullCommand) {
   let pollMsg = "Yes or No?";
   let customMsg = fullCommand.split("yn ");
@@ -242,6 +301,15 @@ function getRandomNumber(maxNumber) {
   return (randomNumber = Math.floor(Math.random() * maxNumber) + 1);
 }
 
+function getCustomMsg(defaultMsg, primaryCommand, fullCommand, mention) {
+  let returnMsg = defaultMsg;
+  let customMsg = fullCommand.split(primaryCommand + " " + mention + " ");
+  if (customMsg.length > 1) {
+    returnMsg = customMsg[1];
+  }
+  return returnMsg;
+}
+
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
@@ -277,6 +345,15 @@ function sendMsgEmbed(receivedMsg, title, sendMsg) {
     .setTitle(title)
     .setColor(embedColor)
     .setDescription(sendMsg);
+  return receivedMsg.channel.send(embed);
+}
+
+function sendMsgMemberEmbed(receivedMsg, title, sendMsg, member) {
+  const embed = new Discord.MessageEmbed()
+    .setTitle(title)
+    .setColor(embedColor)
+    .setDescription(sendMsg)
+    .setImage(member.user.avatarURL());
   return receivedMsg.channel.send(embed);
 }
 
