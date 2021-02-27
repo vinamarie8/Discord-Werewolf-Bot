@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+require("dotenv").config();
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 const config = require("./config.json");
 const reactsAlphabet = [
@@ -362,4 +363,4 @@ function sendMsg(receivedMsg, sendMsg) {
 }
 //#endregion
 
-client.login(config.token);
+client.login();
