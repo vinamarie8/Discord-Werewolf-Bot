@@ -1,0 +1,29 @@
+{
+  "name": "discordwerewolfbot",
+  "version": "1.0.0",
+  "description": "Helper bot for DWWVD or DWWVZ",
+  "main": "dwwb.js",
+  "engines": {
+    "node": "14.15.5",
+    "npm": "*"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dwwb.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinamarie8/Discord-Werewolf-Bot.git"
+  },
+  "author": "Vina",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vinamarie8/Discord-Werewolf-Bot/issues"
+  },
+  "homepage": "https://github.com/vinamarie8/Discord-Werewolf-Bot#readme"
+}

@@ -6,7 +6,7 @@ Permissions
 - Send message to user who sent mesage about permissions if error thrown
 
 New commands
-- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
+/- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
 - Custom poll -- !poll question|choice a|choice b|choice c
 - Custom poll with custom reacts -- !pollReacts question|choice a:react a|choice b:react b
 - DWWVD nominations and voting
