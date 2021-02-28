@@ -1,49 +1,8 @@
 const Discord = require("discord.js");
+const helperFunc = require("./helperFunctions.js");
 require("dotenv").config();
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
-//const config = require("./config.json");
-const reactsAlphabet = [
-  "🇦",
-  "🇧",
-  "🇨",
-  "🇩",
-  "🇪",
-  "🇫",
-  "🇬",
-  "🇭",
-  "🇮",
-  "🇯",
-  "🇰",
-  "🇱",
-  "🇲",
-  "🇳",
-  "🇴",
-  "🇵",
-  "🇶",
-  "🇷",
-  "🇸",
-  "🇹",
-  "🇺",
-  "🇻",
-  "🇼",
-  "🇽",
-  "🇾",
-  "🇿",
-];
-const helpInfo = "`&` can also be used instead of `!`";
-const voteCommandHelp = "`!vote @role_name optional_message`";
-const voteCommandDesc =
-  "Start voting poll for all members with mentioned role.";
-const wheelCommandHelp = "`!wheel @role_name optional_message`";
-const wheelCommandDesc = "Randomly chooses a player of mentioned role";
-const ynCommandHelp = "`!yn yes_or_no_question`";
-const ynCommandDesc = "Start a Yes/No poll";
-const randomNumberCommandHelp = "`!random number` or `!number number`";
-const randomNumberCommandDesc =
-  "Get random number between 1 and number specified";
-const availableCommands = "`vote`, `yn`, `random`, `number`";
-const embedColor = "#c09edb";
-const maxImageNumber = 6;
+const constants = require("./constants.json");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -66,7 +25,7 @@ client.on("message", (receivedMsg) => {
       processCommand(receivedMsg);
     } catch (error) {
       console.error(error);
-      sendMsg(
+      helperFunc.sendMsg(
         receivedMsg,
         "Oops! There was an error. Sorry, please try again."
       );
@@ -91,7 +50,7 @@ function processCommand(receivedMsg) {
 
   if (prefix == "?") {
     if (primaryCommand == "idol") {
-      sendImg(receivedMsg, primaryCommand, "💯0% real");
+      helperFunc.sendImg(receivedMsg, primaryCommand, "💯0% real");
     }
   } else {
     switch (primaryCommand) {
@@ -125,14 +84,14 @@ function processCommand(receivedMsg) {
       case "thankyoutaz":
       case "thumbsuptaz":
       case "unamusedtaz":
-        sendImg(receivedMsg, primaryCommand, "");
+        helperFunc.sendImg(receivedMsg, primaryCommand, "");
         break;
       case "angrytaz":
       case "grumpytaz":
-        sendImg(receivedMsg, "unamusedtaz", "");
+        helperFunc.sendImg(receivedMsg, "unamusedtaz", "");
         break;
       case "idol":
-        sendImg(receivedMsg, primaryCommand, "💯0% real");
+        helperFunc.sendImg(receivedMsg, primaryCommand, "💯0% real");
         break;
       case "random":
       case "number":
@@ -153,48 +112,48 @@ function helpCommand(receivedMsg, arguments) {
     var commandFound = true;
     switch (command) {
       case "vote":
-        helpMsg = helpMsg + voteCommandHelp;
+        helpMsg = helpMsg + constants.voteCommandHelp;
         break;
       case "wheel":
-        helpMsg = helpMsg + wheelCommandHelp;
+        helpMsg = helpMsg + constants.wheelCommandHelp;
         break;
       case "yn":
-        helpMsg = helpMsg + ynCommandHelp;
+        helpMsg = helpMsg + constants.ynCommandHelp;
         break;
       case "random":
       case "number":
-        helpMsg = helpMsg + randomNumberCommandHelp;
+        helpMsg = helpMsg + constants.randomNumberCommandHelp;
         break;
       default:
         helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
         commandFound = false;
-        sendMsg(receivedMsg, helpMsg);
+        helperFunc.sendMsg(receivedMsg, helpMsg);
         break;
     }
 
     if (commandFound) {
-      sendMsgEmbed(receivedMsg, helpMsgTitle, helpMsg);
+      helperFunc.sendMsgEmbed(receivedMsg, helpMsgTitle, helpMsg);
     }
   } else {
     let fullHelpMsg =
-      helpInfo +
+      constants.helpInfo +
       "\n\n" +
-      voteCommandDesc +
+      constants.voteCommandDesc +
       "\n" +
-      voteCommandHelp +
+      constants.voteCommandHelp +
       "\n\n" +
-      wheelCommandDesc +
+      constants.wheelCommandDesc +
       "\n" +
-      wheelCommandHelp +
+      constants.wheelCommandHelp +
       "\n\n" +
-      ynCommandDesc +
+      constants.ynCommandDesc +
       "\n" +
-      ynCommandHelp +
+      constants.ynCommandHelp +
       "\n\n" +
-      randomNumberCommandDesc +
+      constants.randomNumberCommandDesc +
       "\n" +
-      randomNumberCommandHelp;
-    sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
+      constants.randomNumberCommandHelp;
+    helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
 }
 
@@ -216,7 +175,10 @@ function roleCommand(
   msgTitle
 ) {
   const mention = arguments[0];
-  const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
+  const roleMentioned = helperFunc.getRoleFromMention(
+    String(mention),
+    receivedMsg
+  );
   let errMsg = "";
 
   if (roleMentioned) {
@@ -225,16 +187,26 @@ function roleCommand(
       let members = roleMentioned.members.filter((member) => !member.user.bot);
       if (members.size > 0) {
         let membersArray = members.array();
-        msgTitle = getCustomMsg(msgTitle, primaryCommand, fullCommand, mention);
+        msgTitle = helperFunc.getCustomMsg(
+          msgTitle,
+          primaryCommand,
+          fullCommand,
+          mention
+        );
         switch (primaryCommand) {
           case "wheel":
-            let memberIndex = getRandomNumber(members.size) - 1;
+            let memberIndex = helperFunc.getRandomNumber(members.size) - 1;
             let chosenMember = membersArray[memberIndex];
             let msg =
               "**" +
               chosenMember.displayName +
               "** has been chosen by the wheel!";
-            sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
+            helperFunc.sendMsgMemberEmbed(
+              receivedMsg,
+              msgTitle,
+              msg,
+              chosenMember
+            );
             break;
           case "vote":
             var memberCount = 0;
@@ -243,7 +215,7 @@ function roleCommand(
               if (!member.user.bot) {
                 voteMsg =
                   voteMsg +
-                  reactsAlphabet[memberCount] +
+                  constants.reactsAlphabet[memberCount] +
                   " " +
                   member.displayName +
                   "\n\n";
@@ -251,11 +223,11 @@ function roleCommand(
               }
             });
             if (memberCount > 0) {
-              sendMsgWithReacts(
+              helperFunc.sendMsgWithReacts(
                 receivedMsg,
                 voteMsg,
                 msgTitle,
-                reactsAlphabet,
+                constants.reactsAlphabet,
                 memberCount,
                 "vote"
               );
@@ -271,10 +243,10 @@ function roleCommand(
   } else {
     switch (primaryCommand) {
       case "vote":
-        errMsg = "Role name required. Try " + voteCommandHelp + ".";
+        errMsg = "Role name required. Try " + constants.voteCommandHelp + ".";
         break;
       case "wheel":
-        errMsg = "Role name required. Try " + wheelCommandHelp + ".";
+        errMsg = "Role name required. Try " + constants.wheelCommandHelp + ".";
         break;
       default:
         errMsg = "Role name required.";
@@ -282,7 +254,7 @@ function roleCommand(
     }
   }
 
-  if (errMsg != "") sendMsg(receivedMsg, errMsg);
+  if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
 
 function yesNoCommand(receivedMsg, fullCommand) {
@@ -292,7 +264,7 @@ function yesNoCommand(receivedMsg, fullCommand) {
   if (customMsg.length > 1) {
     pollMsg = customMsg[1] + "\n";
   }
-  sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
+  helperFunc.sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
 }
 
 function randomNumberCommand(receivedMsg, arguments) {
@@ -301,86 +273,8 @@ function randomNumberCommand(receivedMsg, arguments) {
     maxNum = arguments[0];
   }
   let randomNumTitle = "Random number between 1 and " + maxNum;
-  let randomNum = getRandomNumber(maxNum);
-  sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
-}
-//#endregion
-
-//#region Helper functions
-function sendImg(receivedMsg, imageName, textMsg) {
-  if (imageName == "idol") {
-    imageNumber = getRandomNumber(maxImageNumber);
-    imageName = imageName + imageNumber.toString();
-  }
-  let filePath = "img/" + imageName + ".png";
-  receivedMsg.channel.send(textMsg, {
-    files: [filePath],
-  });
-}
-
-function getRandomNumber(maxNumber) {
-  //Returns a number between 1 and maxNumber
-  return (randomNumber = Math.floor(Math.random() * maxNumber) + 1);
-}
-
-function getCustomMsg(defaultMsg, primaryCommand, fullCommand, mention) {
-  let returnMsg = defaultMsg;
-  let customMsg = fullCommand.split(primaryCommand + " " + mention + " ");
-  if (customMsg.length > 1) {
-    returnMsg = customMsg[1];
-  }
-  return returnMsg;
-}
-
-async function sendMsgWithReacts(
-  receivedMsg,
-  sendMsg,
-  sendMsgTitle,
-  reacts,
-  reactCount,
-  primaryCommand
-) {
-  const msg = await sendMsgEmbed(receivedMsg, sendMsgTitle, sendMsg);
-  if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
-  for (var i = 0; i < reactCount; i++) {
-    await msg.react(reacts[i]);
-  }
-  if (primaryCommand == "vote") {
-    await msg.react("☮️");
-  }
-}
-
-function getRoleFromMention(mention, receivedMsg) {
-  if (!mention) return;
-  if (mention.startsWith("<@&") && mention.endsWith(">")) {
-    mention = mention.slice(3, -1);
-
-    if (mention.startsWith("!")) {
-      mention = mention.slice(1);
-    }
-    return receivedMsg.guild.roles.cache.get(mention);
-  }
-}
-
-function sendMsgEmbed(receivedMsg, title, sendMsg) {
-  const embed = new Discord.MessageEmbed()
-    .setTitle(title)
-    .setColor(embedColor)
-    .setDescription(sendMsg);
-  return receivedMsg.channel.send(embed);
-}
-
-function sendMsgMemberEmbed(receivedMsg, title, sendMsg, member) {
-  const embed = new Discord.MessageEmbed()
-    .setTitle(title)
-    .setColor(embedColor)
-    .setDescription(sendMsg)
-    .setImage(member.user.avatarURL());
-  return receivedMsg.channel.send(embed);
-}
-
-function sendMsg(receivedMsg, sendMsg) {
-  receivedMsg.channel.send(sendMsg);
+  let randomNum = helperFunc.getRandomNumber(maxNum);
+  helperFunc.sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
 }
 //#endregion
 
