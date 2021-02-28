@@ -30,14 +30,15 @@ const reactsAlphabet = [
   "🇾",
   "🇿",
 ];
-const voteCommandHelp = "`!vote @[role name] [optional: vote message]`";
+const helpInfo = "`&` can also be used instead of `!`";
+const voteCommandHelp = "`!vote @role_name optional_message`";
 const voteCommandDesc =
   "Start voting poll for all members with mentioned role.";
-const wheelCommandHelp = "`!wheel @[role name] [optional: wheel message]`";
+const wheelCommandHelp = "`!wheel @role_name optional_message`";
 const wheelCommandDesc = "Randomly chooses a player of mentioned role";
-const ynCommandHelp = "`!yn [yes or no question]`";
+const ynCommandHelp = "`!yn yes_or_no_question`";
 const ynCommandDesc = "Start a Yes/No poll";
-const randomNumberCommandHelp = "`!random [number]` or `!number [number]`";
+const randomNumberCommandHelp = "`!random number` or `!number number`";
 const randomNumberCommandDesc =
   "Get random number between 1 and number specified";
 const availableCommands = "`vote`, `yn`, `random`, `number`";
@@ -46,7 +47,7 @@ const maxImageNumber = 6;
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
-  client.user.setActivity("!help", { type: "PLAYING" });
+  client.user.setActivity("!help | &help", { type: "PLAYING" });
 });
 
 client.on("message", (receivedMsg) => {
@@ -57,19 +58,30 @@ client.on("message", (receivedMsg) => {
 
   if (
     receivedMsg.content.startsWith("!") ||
-    receivedMsg.content.startsWith("?")
+    receivedMsg.content.startsWith("?") ||
+    receivedMsg.content.startsWith("&") ||
+    receivedMsg.content.startsWith("ww")
   ) {
     try {
       processCommand(receivedMsg);
     } catch (error) {
       console.error(error);
+      sendMsg(
+        receivedMsg,
+        "Oops! There was an error. Sorry, please try again."
+      );
     }
   }
 });
 
 function processCommand(receivedMsg) {
-  let prefix = receivedMsg.content.charAt(0);
-  let fullCommand = receivedMsg.content.substr(1); // Remove the leading exclamation mark
+  let processString = receivedMsg.content;
+  if (receivedMsg.content.startsWith("ww")) {
+    processString = receivedMsg.content.substr(2);
+  }
+
+  let prefix = processString.charAt(0);
+  let fullCommand = processString.substr(1); // Remove the leading exclamation mark
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
   let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
@@ -87,7 +99,7 @@ function processCommand(receivedMsg) {
         helpCommand(receivedMsg, arguments);
         break;
       case "vote":
-        voteCommand(receivedMsg, arguments, fullCommand);
+        voteCommand(receivedMsg, arguments, primaryCommand, fullCommand);
         break;
       case "wheel":
         wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand);
@@ -165,6 +177,8 @@ function helpCommand(receivedMsg, arguments) {
     }
   } else {
     let fullHelpMsg =
+      helpInfo +
+      "\n\n" +
       voteCommandDesc +
       "\n" +
       voteCommandHelp +
@@ -184,57 +198,9 @@ function helpCommand(receivedMsg, arguments) {
   }
 }
 
-function voteCommand(receivedMsg, arguments, fullCommand) {
-  const mention = arguments[0];
-  const roleMentioned = getRoleFromMention(String(mention), receivedMsg);
-  let errMsg = "";
-
-  if (roleMentioned) {
-    let voteMsgTitle = "It's time to vote!";
-    // Display custom vote message
-    let customVoteMsg = fullCommand.split("vote " + mention + " ");
-    if (customVoteMsg.length > 1) {
-      voteMsgTitle = customVoteMsg[1];
-    }
-
-    let membersWithRole = roleMentioned.members;
-
-    console.log("Member Size:" + membersWithRole.size);
-    if (membersWithRole.size > 0) {
-      // List all members with corresponding react
-      var memberCount = 0;
-      var voteMsg = "";
-      membersWithRole.forEach((member) => {
-        if (!member.user.bot) {
-          voteMsg =
-            voteMsg +
-            reactsAlphabet[memberCount] +
-            " " +
-            member.displayName +
-            "\n\n";
-          memberCount++;
-        }
-      });
-      if (memberCount > 0) {
-        sendMsgWithReacts(
-          receivedMsg,
-          voteMsg,
-          voteMsgTitle,
-          reactsAlphabet,
-          memberCount,
-          "vote"
-        );
-      } else {
-        errMsg = `The role group <@&${roleMentioned.id}> has no humans, only bots.`;
-      }
-    } else {
-      errMsg = `There are no members of <@&${roleMentioned.id}>.`;
-    }
-  } else {
-    errMsg = "Role name required. Try " + voteCommandHelp + ".";
-  }
-
-  if (errMsg != "") sendMsg(receivedMsg, errMsg);
+function voteCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
+  let voteTitle = "It's time to vote!";
+  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, voteTitle);
 }
 
 function wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
@@ -270,6 +236,31 @@ function roleCommand(
               "** has been chosen by the wheel!";
             sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
             break;
+          case "vote":
+            var memberCount = 0;
+            var voteMsg = "";
+            membersWithRole.forEach((member) => {
+              if (!member.user.bot) {
+                voteMsg =
+                  voteMsg +
+                  reactsAlphabet[memberCount] +
+                  " " +
+                  member.displayName +
+                  "\n\n";
+                memberCount++;
+              }
+            });
+            if (memberCount > 0) {
+              sendMsgWithReacts(
+                receivedMsg,
+                voteMsg,
+                msgTitle,
+                reactsAlphabet,
+                memberCount,
+                "vote"
+              );
+            }
+            break;
         }
       } else {
         errMsg = `The role group <@&${roleMentioned.id}> has no humans, only bots.`;
@@ -278,7 +269,17 @@ function roleCommand(
       errMsg = `There are no members of <@&${roleMentioned.id}>.`;
     }
   } else {
-    errMsg = "Role name required. Try " + voteCommandHelp + ".";
+    switch (primaryCommand) {
+      case "vote":
+        errMsg = "Role name required. Try " + voteCommandHelp + ".";
+        break;
+      case "wheel":
+        errMsg = "Role name required. Try " + wheelCommandHelp + ".";
+        break;
+      default:
+        errMsg = "Role name required.";
+        break;
+    }
   }
 
   if (errMsg != "") sendMsg(receivedMsg, errMsg);
