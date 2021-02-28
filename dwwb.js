@@ -97,6 +97,22 @@ function processCommand(receivedMsg) {
         break;
       case "my":
       case "if":
+      case "birthdaytaz":
+      case "byetaz":
+      case "confusedtaz":
+      case "congratstaz":
+      case "eatingtaz":
+      case "flowertaz":
+      case "happytaz":
+      case "hitaz":
+      case "loltaz":
+      case "missyoutaz":
+      case "omgtaz":
+      case "sadtaz":
+      case "sorrytaz":
+      case "thankyoutaz":
+      case "thumbsuptaz":
+      case "unamusedtaz":
         sendImg(receivedMsg, primaryCommand, "");
         break;
       case "idol":
