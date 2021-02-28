@@ -115,6 +115,10 @@ function processCommand(receivedMsg) {
       case "unamusedtaz":
         sendImg(receivedMsg, primaryCommand, "");
         break;
+      case "angrytaz":
+      case "grumpytaz":
+        sendImg(receivedMsg, "unamusedtaz", "");
+        break;
       case "idol":
         sendImg(receivedMsg, primaryCommand, "💯0% real");
         break;
