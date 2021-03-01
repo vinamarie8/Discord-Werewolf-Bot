@@ -1,21 +1,40 @@
+DONE
 /- Hide token to allow repository to be public - private text file, gitignore
 /- y/n poll
+/- Send message to user who sent mesage about permissions if error thrown
+/- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
+/- !vote Custom voting text
+/- randomize fake idol image
 
 Permissions
 - Restrict certain commands to be certain role only
-- Send message to user who sent mesage about permissions if error thrown
 
 New commands
-/- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
-- Custom poll -- !poll question|choice a|choice b|choice c
+- Scott's Stats!!! -- !stats pgp_patron_name - Bot reads it from JSON file
 - Custom poll with custom reacts -- !pollReacts question|choice a:react a|choice b:react b
-- DWWVD nominations and voting
+-? Custom poll -- !poll question|choice a|choice b|choice c (There's poll bot)
+-? DWWVD nominations and voting (Kinda complicated and noms aren't that complicated??)
+    - !opennoms 
+        1. use awaitMessages timser set to 30min and filter by the word !nominate
+        2. look for @ of user and edit message embed to say user was nominated
+        3. reaction collector on !nominate message
+        4. if thumbs up added, edit message embed to confirm nomination
+        5. noms closed at end of timer OR on !closenoms 
+    - !closenoms
+        - All nominated get put on vote poll with no kill
+        - knows the mesasge embed from...global variable??
+        - clear the global variable
+
+!wheel
+- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
+- !wheelRoleExcept @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
 
 !vote
-/- Custom voting text
-- Allow only one reaction per user? (could affect performance)
-- Graphical representation of votes? (could affect performance)
-- Only mentioned role members can vote? (sorry ghosties)
+-? Allow only one reaction per user? (could affect performance)
+-? Graphical representation of votes? (could affect performance)
+-? Only mentioned role members can vote? (sorry ghosties, could also affect performance)
+
+Other
+-? dm help
 
 Nonsense fun stuff
-/- randomize fake idol image
