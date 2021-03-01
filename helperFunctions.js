@@ -26,6 +26,17 @@ function getCustomMsg(defaultMsg, primaryCommand, fullCommand, mention) {
   return returnMsg;
 }
 
+function getCustomMsgFromArguments(defaultMsg, arguments, index) {
+  let returnMsg = defaultMsg;
+  let argsWanted = arguments.slice(index);
+  let customMsg = argsWanted.join(" ");
+  console.log(customMsg);
+  if (customMsg.length > 1) {
+    returnMsg = customMsg;
+  }
+  return returnMsg;
+}
+
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
@@ -56,6 +67,18 @@ function getRoleFromMention(mention, receivedMsg) {
   }
 }
 
+function getUserFromMention(mention, receivedMsg) {
+  if (!mention) return;
+  if (mention.startsWith("<@") && mention.endsWith(">")) {
+    mention = mention.slice(3, -1);
+
+    if (mention.startsWith("!")) {
+      mention = mention.slice(1);
+    }
+    return receivedMsg.guild.members.cache.get(mention);
+  }
+}
+
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
@@ -81,8 +104,10 @@ module.exports = {
   sendImg,
   getRandomNumber,
   getCustomMsg,
+  getCustomMsgFromArguments,
   sendMsgWithReacts,
   getRoleFromMention,
+  getUserFromMention,
   sendMsgEmbed,
   sendMsgMemberEmbed,
   sendMsg,

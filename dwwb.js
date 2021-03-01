@@ -27,7 +27,7 @@ client.on("message", (receivedMsg) => {
       console.error(error);
       helperFunc.sendMsg(
         receivedMsg,
-        "Oops! There was an error. Sorry, please try again."
+        "Oops, sorry! There was an error. Please try again."
       );
     }
   }
@@ -187,16 +187,71 @@ function roleCommand(
       let members = roleMentioned.members.filter((member) => !member.user.bot);
       if (members.size > 0) {
         let membersArray = members.array();
-        msgTitle = helperFunc.getCustomMsg(
-          msgTitle,
-          primaryCommand,
-          fullCommand,
-          mention
-        );
         switch (primaryCommand) {
           case "wheel":
-            let memberIndex = helperFunc.getRandomNumber(members.size) - 1;
-            let chosenMember = membersArray[memberIndex];
+            // Remove users from wheel
+            let roleMentioned = false;
+            const membersRemove = [];
+            for (let i = 1; i < arguments.length; i++) {
+              argString = arguments[i];
+              // Stop if a role is mentioned
+              if (argString.startsWith("<@&")) {
+                roleMentioned = true;
+                errMsg =
+                  "A role was mentioned. Only specific users can be exempt from the wheel.";
+                helperFunc.sendMsg(receivedMsg, errMsg);
+                return;
+              }
+              // Look for users mentioned
+              if (argString.startsWith("<@")) {
+                let member = helperFunc.getUserFromMention(
+                  argString,
+                  receivedMsg
+                );
+                membersRemove.push(member);
+              } else {
+                break;
+              }
+            }
+
+            // Set message title
+            let membersRemoveCount = membersRemove.length;
+            let msgIndex = membersRemoveCount + 1;
+            if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
+              msgTitle = helperFunc.getCustomMsgFromArguments(
+                msgTitle,
+                arguments,
+                msgIndex
+              );
+            } else if (!(membersRemoveCount > 0)) {
+              msgTitle = helperFunc.getCustomMsg(
+                msgTitle,
+                primaryCommand,
+                fullCommand,
+                mention
+              );
+            }
+
+            let membersWheel = [];
+
+            console.log("b4: " + members.size);
+            if (membersRemoveCount > 0) {
+              membersWheel = membersArray.filter(
+                (member) => !membersRemove.includes(member)
+              );
+              if (!(membersWheel.length > 0)) {
+                errMsg = "Oops! The wheel is empty now.";
+                helperFunc.sendMsg(receivedMsg, errMsg);
+                return;
+              }
+            } else {
+              membersWheel = membersArray;
+            }
+            console.log(membersWheel.length);
+
+            let memberIndex =
+              helperFunc.getRandomNumber(membersWheel.length) - 1;
+            let chosenMember = membersWheel[memberIndex];
             let msg =
               "**" +
               chosenMember.displayName +
@@ -211,6 +266,12 @@ function roleCommand(
           case "vote":
             var memberCount = 0;
             var voteMsg = "";
+            msgTitle = helperFunc.getCustomMsg(
+              msgTitle,
+              primaryCommand,
+              fullCommand,
+              mention
+            );
             membersWithRole.forEach((member) => {
               if (!member.user.bot) {
                 voteMsg =
