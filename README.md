@@ -38,7 +38,7 @@ I used [this tutorial](https://www.devdungeon.com/content/javascript-discord-bot
 </ol>
 <li>Clone this repository to a chosen directory on your machine</li>
 <li>Delete the nodes_module direcotry if it is there</li>
-<li>Open command prompt in the directory and run <code>npm install discord.js</code> (Refer to Install the Discord.js module section in the tutorial) This will add the node_modules directory</li>
+<li>Open command prompt in the directory and run <code>npm install discord.js</code> (Refer to "Install the Discord.js module" section in the tutorial) This will add the node_modules directory</li>
 <li>Add a file named ".env" to your directory. Inside should be one line <code>DISCORD_TOKEN:secret_token</code>.</li> 
 <ul>
 <li>Replace secret_token with your bot's secret token. On the Discord bot application page go to Settings > Bot > Click on Copy under TOKEN</li>
