@@ -5,6 +5,8 @@ DONE
 /- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
 /- !vote Custom voting text
 /- randomize fake idol image
+/- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
+/- !vote @role_name @player1 @player2 optional_message -- vote that omits playeres mentioned
 
 Permissions
 - Restrict certain commands to be certain role only
@@ -26,11 +28,8 @@ New commands
         - clear the global variable
 
 !wheel
-- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
-- !wheelRoleExcept @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
 
 !vote
-- !vote @role_name @player1 @player2 optional_message -- vote that omits playeres mentioned
 -? Allow only one reaction per user? (could affect performance)
 -? Graphical representation of votes? (could affect performance)
 -? Only mentioned role members can vote? (sorry ghosties, could also affect performance)
