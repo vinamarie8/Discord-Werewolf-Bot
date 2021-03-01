@@ -15,7 +15,7 @@ Permissions
 New commands
 - Scott's Stats!!! -- !stats pgp_patron_name - Bot reads it from JSON file
 - Custom poll with custom reacts -- !pollReacts question|choice a:react a|choice b:react b
--? Custom poll -- !poll question|choice a|choice b|choice c (There's poll bot)
+- Custom poll -- !poll question|choice a|choice b|choice c (For when poll bot is sleep)
 
 !wheel
 
@@ -24,7 +24,12 @@ New commands
 -? Graphical representation of votes? (could affect performance)
 -? Only mentioned role members can vote? (sorry ghosties, could also affect performance)
 
+!votePlayers
+- without mention? - !votenames?
+-? maybe automate noms???
+
 Other
 -? dm help
+- Add desc to help for single command
 
 Nonsense fun stuff

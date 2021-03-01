@@ -207,10 +207,13 @@ function roleCommand(
           arguments
         );
 
-        if (membersRemove.length > 0 && membersRemove[0].toString() == "role") {
-          errMsg = "A role was mentioned. Only specific users can be removed.";
-          helperFunc.sendMsg(receivedMsg, errMsg);
-          return;
+        if (membersRemove.length > 0) {
+          if (membersRemove[0].toString() == "role") {
+            errMsg =
+              "A role was mentioned. Only specific users can be removed.";
+            helperFunc.sendMsg(receivedMsg, errMsg);
+            return;
+          }
         }
 
         // Set message title
@@ -307,13 +310,14 @@ function votePlayersCommand(receivedMsg, arguments) {
     arguments
   );
 
-  if (membersMentioned.length > 0 && membersMentioned[0].toString() == "role") {
-    errMsg =
-      "A role was mentioned. Only specific users can be voted for using !voteplayers.";
-    helperFunc.sendMsg(receivedMsg, errMsg);
-    return;
+  if (membersMentioned.length > 0) {
+    if (membersMentioned[0].toString() == "role") {
+      errMsg =
+        "A role was mentioned. Only specific users can be voted for using !voteplayers.";
+      helperFunc.sendMsg(receivedMsg, errMsg);
+      return;
+    }
   }
-
   msgTitle = helperFunc.getCustomMsgVotePlayers(
     arguments,
     membersMentioned,
