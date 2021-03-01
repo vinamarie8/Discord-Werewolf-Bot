@@ -20,16 +20,26 @@ New commands
 !wheel
 
 !vote
+- Timer - messages results after timer runs out :o (Set a max) - display countdown, stop it prematurely?
 -? Allow only one reaction per user? (could affect performance)
 -? Graphical representation of votes? (could affect performance)
 -? Only mentioned role members can vote? (sorry ghosties, could also affect performance)
 
 !votePlayers
-- without mention? - !votenames?
--? maybe automate noms???
+-? maybe automate noms for dwwvd??? -- (if timer gets interrupted, it could break)
+
+!votenames or !votenoms
+- Format either:
+    - same as custom poll but it will add peace (no kill) react: 
+        !votenames vote_message|name 1|name 2|name 3
+        !pollnames vote_message|name 1|name 2|name 3
+    - similar to !votePlayers but with pipe to separate optional message:
+        !votenames name1 name2 name3|optional_message
 
 Other
 -? dm help
+-? help just gives list of commands and says to ask help for specific command
 - Add desc to help for single command
+- Add other taz names - caketaz, celebratetaz, celebrationtaz
 
 Nonsense fun stuff

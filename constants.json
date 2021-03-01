@@ -40,7 +40,7 @@
       "randomNumberCommandHelp": "`!random number` or `!number number`",
       "randomNumberCommandDesc":
         "Get random number between 1 and number specified",
-      "availableCommands": "`vote`, `yn`, `random`, `number`",
+      "availableCommands": "`vote`, `voteplayers`, `wheel`, `yn`, `random`, `number`",
       "embedColor": "#c09edb",
       "maxImageNumber": 6
 }

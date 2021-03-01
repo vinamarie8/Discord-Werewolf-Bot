@@ -135,7 +135,11 @@ function helpCommand(receivedMsg, arguments) {
         helpMsg = helpMsg + constants.randomNumberCommandHelp;
         break;
       default:
-        helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
+        helpMsg =
+          "`" +
+          command +
+          "` not recognized. Try " +
+          constants.availableCommands;
         commandFound = false;
         helperFunc.sendMsg(receivedMsg, helpMsg);
         break;
