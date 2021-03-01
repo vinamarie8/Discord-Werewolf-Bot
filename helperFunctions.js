@@ -54,6 +54,15 @@ function getCustomMsgMembersRemove(
   return msgTitle;
 }
 
+function getCustomMsgVotePlayers(arguments, membersMentioned, msgTitle) {
+  let membersMentionedCount = membersMentioned.length;
+  let msgIndex = membersMentionedCount;
+  if (membersMentionedCount > 0 && !(arguments[msgIndex] == undefined)) {
+    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
+  }
+  return msgTitle;
+}
+
 async function sendMsgWithReacts(
   receivedMsg,
   sendMsg,
@@ -96,15 +105,14 @@ function getUserFromMention(mention, receivedMsg) {
   }
 }
 
-function getMembersRemoveArray(receivedMsg, arguments, errMsg) {
+function getMembersRemoveArray(receivedMsg, arguments) {
   const membersRemove = [];
   for (let i = 1; i < arguments.length; i++) {
     argString = arguments[i];
     // Stop if a role is mentioned
     if (argString.startsWith("<@&")) {
-      errMsg = "A role was mentioned. Only specific users can be removed.";
-      sendMsg(receivedMsg, errMsg);
-      return;
+      const err = ["role"];
+      return err;
     }
     // Look for users mentioned
     if (argString.startsWith("<@")) {
@@ -115,6 +123,26 @@ function getMembersRemoveArray(receivedMsg, arguments, errMsg) {
     }
   }
   return membersRemove;
+}
+
+function getMembersMentionedArray(receivedMsg, arguments) {
+  const membersMentioned = [];
+  for (let i = 0; i < arguments.length; i++) {
+    argString = arguments[i];
+    // Stop if a role is mentioned
+    if (argString.startsWith("<@&")) {
+      const err = ["role"];
+      return err;
+    }
+    // Look for users mentioned
+    if (argString.startsWith("<@")) {
+      let member = getUserFromMention(argString, receivedMsg);
+      membersMentioned.push(member);
+    } else {
+      break;
+    }
+  }
+  return membersMentioned;
 }
 
 function getFilteredMembersArray(membersRemove, membersArray) {
@@ -158,10 +186,12 @@ module.exports = {
   getCustomMsg,
   getCustomMsgFromArguments,
   getCustomMsgMembersRemove,
+  getCustomMsgVotePlayers,
   sendMsgWithReacts,
   getRoleFromMention,
   getUserFromMention,
   getMembersRemoveArray,
+  getMembersMentionedArray,
   getFilteredMembersArray,
   sendMsgEmbed,
   sendMsgMemberEmbed,

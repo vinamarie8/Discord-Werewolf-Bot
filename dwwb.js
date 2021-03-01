@@ -60,6 +60,12 @@ function processCommand(receivedMsg) {
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullCommand);
         break;
+      case "voteplayer":
+      case "votePlayer":
+      case "voteplayers":
+      case "votePlayers":
+        votePlayersCommand(receivedMsg, arguments);
+        break;
       case "wheel":
         wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand);
         break;
@@ -114,6 +120,10 @@ function helpCommand(receivedMsg, arguments) {
       case "vote":
         helpMsg = helpMsg + constants.voteCommandHelp;
         break;
+      case "votePlayers":
+      case "voteplayers":
+        helpMsg = helpMsg + constants.votePlayersCommandHelp;
+        break;
       case "wheel":
         helpMsg = helpMsg + constants.wheelCommandHelp;
         break;
@@ -141,6 +151,10 @@ function helpCommand(receivedMsg, arguments) {
       constants.voteCommandDesc +
       "\n" +
       constants.voteCommandHelp +
+      "\n\n" +
+      constants.votePlayersCommandDesc +
+      "\n" +
+      constants.votePlayersCommandHelp +
       "\n\n" +
       constants.wheelCommandDesc +
       "\n" +
@@ -190,9 +204,14 @@ function roleCommand(
         // Remove users from members array
         let membersRemove = helperFunc.getMembersRemoveArray(
           receivedMsg,
-          arguments,
-          errMsg
+          arguments
         );
+
+        if (membersRemove.length > 0 && membersRemove[0].toString() == "role") {
+          errMsg = "A role was mentioned. Only specific users can be removed.";
+          helperFunc.sendMsg(receivedMsg, errMsg);
+          return;
+        }
 
         // Set message title
         msgTitle = helperFunc.getCustomMsgMembersRemove(
@@ -277,6 +296,65 @@ function roleCommand(
     }
   }
 
+  if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
+}
+
+function votePlayersCommand(receivedMsg, arguments) {
+  let errMsg = "";
+  var msgTitle = "It's time to vote!";
+  let membersMentioned = helperFunc.getMembersMentionedArray(
+    receivedMsg,
+    arguments
+  );
+
+  if (membersMentioned.length > 0 && membersMentioned[0].toString() == "role") {
+    errMsg =
+      "A role was mentioned. Only specific users can be voted for using !voteplayers.";
+    helperFunc.sendMsg(receivedMsg, errMsg);
+    return;
+  }
+
+  msgTitle = helperFunc.getCustomMsgVotePlayers(
+    arguments,
+    membersMentioned,
+    msgTitle
+  );
+
+  if (membersMentioned.length > 0) {
+    let validMembersMentioned = membersMentioned.filter(
+      (member) => !member.user.bot
+    );
+
+    if (validMembersMentioned.length > 0) {
+      var memberCount = 0;
+      var voteMsg = "";
+
+      validMembersMentioned.forEach((member) => {
+        voteMsg =
+          voteMsg +
+          constants.reactsAlphabet[memberCount] +
+          " " +
+          member.displayName +
+          "\n\n";
+        memberCount++;
+      });
+      if (memberCount > 0) {
+        helperFunc.sendMsgWithReacts(
+          receivedMsg,
+          voteMsg,
+          msgTitle,
+          constants.reactsAlphabet,
+          memberCount,
+          "vote"
+        );
+      }
+    } else {
+      errMsg = "No humans were mentioned, only bots.";
+    }
+  } else {
+    errMsg =
+      "No members were mentioned. Try " + constants.votePlayersCommandHelp;
+  }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
 
