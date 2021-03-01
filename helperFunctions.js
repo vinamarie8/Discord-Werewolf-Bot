@@ -30,11 +30,28 @@ function getCustomMsgFromArguments(defaultMsg, arguments, index) {
   let returnMsg = defaultMsg;
   let argsWanted = arguments.slice(index);
   let customMsg = argsWanted.join(" ");
-  console.log(customMsg);
   if (customMsg.length > 1) {
     returnMsg = customMsg;
   }
   return returnMsg;
+}
+
+function getCustomMsgMembersRemove(
+  primaryCommand,
+  fullCommand,
+  mention,
+  arguments,
+  membersRemove,
+  msgTitle
+) {
+  let membersRemoveCount = membersRemove.length;
+  let msgIndex = membersRemoveCount + 1;
+  if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
+    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
+  } else if (!(membersRemoveCount > 0)) {
+    msgTitle = getCustomMsg(msgTitle, primaryCommand, fullCommand, mention);
+  }
+  return msgTitle;
 }
 
 async function sendMsgWithReacts(
@@ -79,6 +96,41 @@ function getUserFromMention(mention, receivedMsg) {
   }
 }
 
+function getMembersRemoveArray(receivedMsg, arguments, errMsg) {
+  const membersRemove = [];
+  for (let i = 1; i < arguments.length; i++) {
+    argString = arguments[i];
+    // Stop if a role is mentioned
+    if (argString.startsWith("<@&")) {
+      errMsg = "A role was mentioned. Only specific users can be removed.";
+      sendMsg(receivedMsg, errMsg);
+      return;
+    }
+    // Look for users mentioned
+    if (argString.startsWith("<@")) {
+      let member = getUserFromMention(argString, receivedMsg);
+      membersRemove.push(member);
+    } else {
+      break;
+    }
+  }
+  return membersRemove;
+}
+
+function getFilteredMembersArray(membersRemove, membersArray) {
+  let membersKept = [];
+  let membersRemoveCount = membersRemove.length;
+  if (membersRemoveCount > 0) {
+    membersKept = membersArray.filter(
+      (member) => !membersRemove.includes(member)
+    );
+  } else {
+    membersKept = membersArray;
+  }
+  console.log(membersKept.length);
+  return membersKept;
+}
+
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
@@ -105,9 +157,12 @@ module.exports = {
   getRandomNumber,
   getCustomMsg,
   getCustomMsgFromArguments,
+  getCustomMsgMembersRemove,
   sendMsgWithReacts,
   getRoleFromMention,
   getUserFromMention,
+  getMembersRemoveArray,
+  getFilteredMembersArray,
   sendMsgEmbed,
   sendMsgMemberEmbed,
   sendMsg,
