@@ -35,6 +35,8 @@ client.on("message", (receivedMsg) => {
 
 function processCommand(receivedMsg) {
   let processString = receivedMsg.content;
+  processString = processString.replace(/\s\s+/g, " "); // Remove extra spaces
+  processString = processString.replace("><", "> <"); // Add space between mentions
   if (receivedMsg.content.startsWith("ww")) {
     processString = receivedMsg.content.substr(2);
   }
@@ -203,23 +205,24 @@ function roleCommand(
     let membersWithRole = roleMentioned.members;
     if (membersWithRole.size > 0) {
       let members = roleMentioned.members.filter((member) => !member.user.bot);
+      console.log("members " + members.size);
       if (members.size > 0) {
         let membersArray = members.array();
         // Remove users from members array
-        let membersRemove = helperFunc.getMembersRemoveArray(
+        let membersRemove = helperFunc.getMembersMentionedArray(
           receivedMsg,
-          arguments
+          arguments,
+          1
         );
 
-        if (membersRemove.length > 0) {
-          if (membersRemove[0].toString() == "role") {
-            errMsg =
-              "A role was mentioned. Only specific users can be removed.";
-            helperFunc.sendMsg(receivedMsg, errMsg);
-            return;
-          }
+        console.log("members " + membersRemove.length);
+        errMsg = helperFunc.checkMembersArrayForError(membersRemove);
+        if (errMsg != "") {
+          helperFunc.sendMsg(receivedMsg, errMsg);
+          return;
         }
 
+        console.log("msgTitle: " + msgTitle);
         // Set message title
         msgTitle = helperFunc.getCustomMsgMembersRemove(
           primaryCommand,
@@ -230,6 +233,8 @@ function roleCommand(
           msgTitle
         );
 
+        console.log("msg: " + msgTitle);
+        console.log("membersArray.length: " + membersArray.length);
         // Filter array
         let membersKept = helperFunc.getFilteredMembersArray(
           membersRemove,
@@ -311,17 +316,16 @@ function votePlayersCommand(receivedMsg, arguments) {
   var msgTitle = "It's time to vote!";
   let membersMentioned = helperFunc.getMembersMentionedArray(
     receivedMsg,
-    arguments
+    arguments,
+    0
   );
 
-  if (membersMentioned.length > 0) {
-    if (membersMentioned[0].toString() == "role") {
-      errMsg =
-        "A role was mentioned. Only specific users can be voted for using !voteplayers.";
-      helperFunc.sendMsg(receivedMsg, errMsg);
-      return;
-    }
+  errMsg = helperFunc.checkMembersArrayForError(membersMentioned);
+  if (errMsg != "") {
+    helperFunc.sendMsg(receivedMsg, errMsg);
+    return;
   }
+
   msgTitle = helperFunc.getCustomMsgVotePlayers(
     arguments,
     membersMentioned,

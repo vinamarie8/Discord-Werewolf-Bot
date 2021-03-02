@@ -46,6 +46,7 @@ function getCustomMsgMembersRemove(
 ) {
   let membersRemoveCount = membersRemove.length;
   let msgIndex = membersRemoveCount + 1;
+  console.log("membersRemoveCount: " + membersRemoveCount);
   if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
     msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
   } else if (!(membersRemoveCount > 0)) {
@@ -105,44 +106,54 @@ function getUserFromMention(mention, receivedMsg) {
   }
 }
 
-function getMembersRemoveArray(receivedMsg, arguments) {
-  const membersRemove = [];
-  for (let i = 1; i < arguments.length; i++) {
-    argString = arguments[i];
-    // Stop if a role is mentioned
-    if (argString.startsWith("<@&")) {
-      const err = ["role"];
-      return err;
-    }
-    // Look for users mentioned
-    if (argString.startsWith("<@")) {
-      let member = getUserFromMention(argString, receivedMsg);
-      membersRemove.push(member);
-    } else {
-      break;
-    }
-  }
-  return membersRemove;
-}
-
-function getMembersMentionedArray(receivedMsg, arguments) {
+function getMembersMentionedArray(receivedMsg, arguments, startIndex) {
   const membersMentioned = [];
-  for (let i = 0; i < arguments.length; i++) {
+  let err = [];
+  // startIndex is 1 when a role is mentioned since we only want members mentioned.
+  for (let i = startIndex; i < arguments.length; i++) {
     argString = arguments[i];
     // Stop if a role is mentioned
     if (argString.startsWith("<@&")) {
-      const err = ["role"];
+      err = ["role"];
       return err;
     }
     // Look for users mentioned
     if (argString.startsWith("<@")) {
       let member = getUserFromMention(argString, receivedMsg);
+      if (!member) {
+        err = ["notmember"];
+        return err;
+      }
       membersMentioned.push(member);
     } else {
       break;
     }
   }
   return membersMentioned;
+}
+
+function checkMembersArrayForError(membersArray) {
+  let errMsg = "";
+  if (membersArray.length > 0) {
+    console.log("memberid: " + membersArray[0].id);
+    if (membersArray[0].id) return errMsg;
+    console.log("membersArray[0]: " + membersArray[0]);
+    let errType = membersArray[0].toString();
+    switch (errType) {
+      case "role":
+        errMsg =
+          "A role was mentioned in list of players. Only specific users can be mentioned.";
+        break;
+      case "notmember":
+        errMsg = "A user mentioned is not part of this server.";
+        break;
+      default:
+        errMsg =
+          "Oops, sorry! There was an error. Check the formatting and try again.";
+        break;
+    }
+  }
+  return errMsg;
 }
 
 function getFilteredMembersArray(membersRemove, membersArray) {
@@ -155,7 +166,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
   } else {
     membersKept = membersArray;
   }
-  console.log(membersKept.length);
+  console.log("membersKept.length:" + membersKept.length);
   return membersKept;
 }
 
@@ -190,8 +201,8 @@ module.exports = {
   sendMsgWithReacts,
   getRoleFromMention,
   getUserFromMention,
-  getMembersRemoveArray,
   getMembersMentionedArray,
+  checkMembersArrayForError,
   getFilteredMembersArray,
   sendMsgEmbed,
   sendMsgMemberEmbed,
