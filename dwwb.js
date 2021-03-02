@@ -94,8 +94,31 @@ function processCommand(receivedMsg) {
       case "unamusedtaz":
         helperFunc.sendImg(receivedMsg, primaryCommand, "");
         break;
+      case "celebrationtaz":
+      case "celebratetaz":
+      case "caketaz":
+      case "partytaz":
+        helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
+        break;
+      case "chickentaz":
+      case "chickenlegtaz":
+      case "turkeytaz":
+      case "turkeylegtaz":
+        helperFunc.sendImg(receivedMsg, "eatingtaz", "");
+        break;
+      case "flowerstaz":
+        helperFunc.sendImg(receivedMsg, "flowertaz", "");
+        break;
+      case "heartstaz":
+        helperFunc.sendImg(receivedMsg, "happytaz", "");
+        break;
+      case "crytaz":
+      case "saddesttaz":
+        helperFunc.sendImg(receivedMsg, "sadtaz", "");
+        break;
       case "angrytaz":
       case "grumpytaz":
+      case "eyerolltaz":
         helperFunc.sendImg(receivedMsg, "unamusedtaz", "");
         break;
       case "idol":
