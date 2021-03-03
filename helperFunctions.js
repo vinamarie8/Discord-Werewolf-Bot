@@ -55,7 +55,7 @@ function getCustomMsgMembersRemove(
   return msgTitle;
 }
 
-function getCustomMsgVotePlayers(arguments, membersMentioned, msgTitle) {
+function getCustomMsgPlayers(arguments, membersMentioned, msgTitle) {
   let membersMentionedCount = membersMentioned.length;
   let msgIndex = membersMentionedCount;
   if (membersMentionedCount > 0 && !(arguments[msgIndex] == undefined)) {
@@ -199,7 +199,7 @@ module.exports = {
   getCustomMsg,
   getCustomMsgFromArguments,
   getCustomMsgMembersRemove,
-  getCustomMsgVotePlayers,
+  getCustomMsgPlayers,
   sendMsgWithReacts,
   getRoleFromMention,
   getUserFromMention,

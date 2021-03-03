@@ -40,6 +40,10 @@
           "help": "`!wheel @role_name @optional_player1 @optional_player2 optional_message`",
           "desc": "Randomly chooses a player of mentioned role. Players mentioned will be removed from the wheel."
         },
+        "wheelplayers": {
+          "help": "`!wheelplayers @player1 @player2 optional_message`",
+          "desc": "Randomly chooses a player from players mentioned."
+        },
         "yn": {
           "help": "`!yn yes_or_no_question`",
           "desc": "Start a Yes/No poll"
@@ -52,5 +56,9 @@
       "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
       "availableCommands": "`vote`, `voteplayers`, `wheel`, `yn`, `random`, `number`",
       "embedColor": "#c09edb",
-      "maxImageNumber": 6
+      "maxImageNumber": 6,
+      "voteMsgTitle": "It's time to vote!",
+      "wheelMsgTitle": "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡",
+      "onlyBotsMentioned": "No humans were mentioned, only bots.",
+      "noMembersMentioned": "No members were mentioned."
 }
