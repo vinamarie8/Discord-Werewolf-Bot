@@ -3,6 +3,8 @@ const helperFunc = require("./helperFunctions.js");
 require("dotenv").config();
 const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 const constants = require("./constants.json");
+const newLine = "\n";
+const newLineDouble = "\n\n";
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -50,6 +52,7 @@ function processCommand(receivedMsg) {
   console.log("Command received: " + primaryCommand);
   console.log("Arguments: " + arguments); // There may not be any arguments
 
+  primaryCommand = String(primaryCommand).toLowerCase();
   if (prefix == "?") {
     if (primaryCommand == "idol") {
       helperFunc.sendImg(receivedMsg, primaryCommand, "💯0% real");
@@ -136,66 +139,45 @@ function processCommand(receivedMsg) {
 
 //#region Command functions
 function helpCommand(receivedMsg, arguments) {
+  var helpCommands = constants.helpCommands;
   if (arguments.length > 0) {
-    var command = arguments[0];
+    var command = String(arguments[0]).toLowerCase();
     var helpMsgTitle = "How to use `" + command + "`";
     var helpMsg = "";
     var commandFound = true;
-    switch (command) {
-      case "vote":
-        helpMsg = helpMsg + constants.voteCommandHelp;
-        break;
-      case "votePlayers":
-      case "voteplayers":
-        helpMsg = helpMsg + constants.votePlayersCommandHelp;
-        break;
-      case "wheel":
-        helpMsg = helpMsg + constants.wheelCommandHelp;
-        break;
-      case "yn":
-        helpMsg = helpMsg + constants.ynCommandHelp;
-        break;
-      case "random":
-      case "number":
-        helpMsg = helpMsg + constants.randomNumberCommandHelp;
-        break;
-      default:
-        helpMsg =
-          "`" +
-          command +
-          "` not recognized. Try " +
-          constants.availableCommands;
-        commandFound = false;
-        helperFunc.sendMsg(receivedMsg, helpMsg);
-        break;
+
+    if (command == "number") command = "random";
+    // Help for individual command
+    if (helpCommands[command]) {
+      helpMsg =
+        helpMsg +
+        helpCommands[command]["desc"] +
+        newLine +
+        helpCommands[command]["help"];
+    } else {
+      helpMsg =
+        "`" + command + "` not recognized. Try " + constants.availableCommands;
+      commandFound = false;
+      helperFunc.sendMsg(receivedMsg, helpMsg);
     }
 
     if (commandFound) {
       helperFunc.sendMsgEmbed(receivedMsg, helpMsgTitle, helpMsg);
     }
   } else {
-    let fullHelpMsg =
-      constants.helpInfo +
-      "\n\n" +
-      constants.voteCommandDesc +
-      "\n" +
-      constants.voteCommandHelp +
-      "\n\n" +
-      constants.votePlayersCommandDesc +
-      "\n" +
-      constants.votePlayersCommandHelp +
-      "\n\n" +
-      constants.wheelCommandDesc +
-      "\n" +
-      constants.wheelCommandHelp +
-      "\n\n" +
-      constants.ynCommandDesc +
-      "\n" +
-      constants.ynCommandHelp +
-      "\n\n" +
-      constants.randomNumberCommandDesc +
-      "\n" +
-      constants.randomNumberCommandHelp;
+    // Full help message
+    let fullHelpMsg = constants.helpInfo + newLineDouble;
+    for (var i in helpCommands) {
+      if (helpCommands[i] instanceof Object) {
+        fullHelpMsg =
+          fullHelpMsg +
+          helpCommands[i]["desc"] +
+          newLine +
+          helpCommands[i]["help"] +
+          newLineDouble;
+      }
+    }
+
     helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
 }
