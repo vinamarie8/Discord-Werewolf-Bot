@@ -8,6 +8,8 @@ DONE
 /- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
 /- !vote @role_name @player1 @player2 optional_message -- vote that omits playeres mentioned
 /- !votePlayers - @player1 @player2 @player# optional_message
+/- Add desc to help for single command
+/- Add other taz names - caketaz, celebratetaz, celebrationtaz
 
 Permissions
 - Restrict certain commands to be certain role only
@@ -28,7 +30,7 @@ New commands
 !votePlayers
 -? maybe automate noms for dwwvd??? -- (if timer gets interrupted, it could break)
 
-!votenames or !votenoms
+!votenames or !votenoms -- Use names instead of mentioning players
 - Format either:
     - same as custom poll but it will add peace (no kill) react: 
         !votenames vote_message|name 1|name 2|name 3
@@ -39,7 +41,5 @@ New commands
 Other
 -? dm help
 -? help just gives list of commands and says to ask help for specific command
-- Add desc to help for single command
-- Add other taz names - caketaz, celebratetaz, celebrationtaz
 
 Nonsense fun stuff

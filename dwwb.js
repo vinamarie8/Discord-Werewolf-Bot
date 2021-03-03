@@ -5,6 +5,7 @@ const client = new Discord.Client({ ws: { intents: Discord.Intents.ALL } });
 const constants = require("./constants.json");
 const newLine = "\n";
 const newLineDouble = "\n\n";
+const helpCommands = constants.helpCommands;
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -139,7 +140,6 @@ function processCommand(receivedMsg) {
 
 //#region Command functions
 function helpCommand(receivedMsg, arguments) {
-  var helpCommands = constants.helpCommands;
   if (arguments.length > 0) {
     var command = String(arguments[0]).toLowerCase();
     var helpMsgTitle = "How to use `" + command + "`";
@@ -300,17 +300,7 @@ function roleCommand(
       errMsg = `There are no members of <@&${roleMentioned.id}>.`;
     }
   } else {
-    switch (primaryCommand) {
-      case "vote":
-        errMsg = "Role name required. Try " + constants.voteCommandHelp + ".";
-        break;
-      case "wheel":
-        errMsg = "Role name required. Try " + constants.wheelCommandHelp + ".";
-        break;
-      default:
-        errMsg = "Role name required.";
-        break;
-    }
+    errMsg = "Role name required. Try " + helpCommands[primaryCommand]["help"];
   }
 
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
@@ -370,7 +360,7 @@ function votePlayersCommand(receivedMsg, arguments) {
     }
   } else {
     errMsg =
-      "No members were mentioned. Try " + constants.votePlayersCommandHelp;
+      "No members were mentioned. Try " + helpCommands["voteplayers"]["help"];
   }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }

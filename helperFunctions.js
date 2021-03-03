@@ -114,14 +114,16 @@ function getMembersMentionedArray(receivedMsg, arguments, startIndex) {
     argString = arguments[i];
     // Stop if a role is mentioned
     if (argString.startsWith("<@&")) {
-      err = ["role"];
+      err.push("role");
+      err.push(argString);
       return err;
     }
     // Look for users mentioned
     if (argString.startsWith("<@")) {
       let member = getUserFromMention(argString, receivedMsg);
       if (!member) {
-        err = ["notmember"];
+        err.push("notmember");
+        err.push(argString);
         return err;
       }
       membersMentioned.push(member);
@@ -139,13 +141,13 @@ function checkMembersArrayForError(membersArray) {
     if (membersArray[0].id) return errMsg;
     console.log("membersArray[0]: " + membersArray[0]);
     let errType = membersArray[0].toString();
+    let errArg = membersArray[1].toString();
     switch (errType) {
       case "role":
-        errMsg =
-          "A role was mentioned in list of players. Only specific users can be mentioned.";
+        errMsg = errArg + " is a role. Only specific users can be mentioned.";
         break;
       case "notmember":
-        errMsg = "A user mentioned is not part of this server.";
+        errMsg = errArg + " is not part of this server.";
         break;
       default:
         errMsg =
