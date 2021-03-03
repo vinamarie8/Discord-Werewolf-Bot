@@ -27,7 +27,7 @@ client.on("message", (receivedMsg) => {
       console.error(error);
       helperFunc.sendMsg(
         receivedMsg,
-        "Oops! There was an error. Sorry, please try again."
+        "Oops, sorry! There was an error. Please try again."
       );
     }
   }
@@ -35,6 +35,8 @@ client.on("message", (receivedMsg) => {
 
 function processCommand(receivedMsg) {
   let processString = receivedMsg.content;
+  processString = processString.replace(/\s\s+/g, " "); // Remove extra spaces
+  processString = processString.replace("><", "> <"); // Add space between mentions
   if (receivedMsg.content.startsWith("ww")) {
     processString = receivedMsg.content.substr(2);
   }
@@ -59,6 +61,12 @@ function processCommand(receivedMsg) {
         break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullCommand);
+        break;
+      case "voteplayer":
+      case "votePlayer":
+      case "voteplayers":
+      case "votePlayers":
+        votePlayersCommand(receivedMsg, arguments);
         break;
       case "wheel":
         wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand);
@@ -86,8 +94,31 @@ function processCommand(receivedMsg) {
       case "unamusedtaz":
         helperFunc.sendImg(receivedMsg, primaryCommand, "");
         break;
+      case "celebrationtaz":
+      case "celebratetaz":
+      case "caketaz":
+      case "partytaz":
+        helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
+        break;
+      case "chickentaz":
+      case "chickenlegtaz":
+      case "turkeytaz":
+      case "turkeylegtaz":
+        helperFunc.sendImg(receivedMsg, "eatingtaz", "");
+        break;
+      case "flowerstaz":
+        helperFunc.sendImg(receivedMsg, "flowertaz", "");
+        break;
+      case "heartstaz":
+        helperFunc.sendImg(receivedMsg, "happytaz", "");
+        break;
+      case "crytaz":
+      case "saddesttaz":
+        helperFunc.sendImg(receivedMsg, "sadtaz", "");
+        break;
       case "angrytaz":
       case "grumpytaz":
+      case "eyerolltaz":
         helperFunc.sendImg(receivedMsg, "unamusedtaz", "");
         break;
       case "idol":
@@ -114,6 +145,10 @@ function helpCommand(receivedMsg, arguments) {
       case "vote":
         helpMsg = helpMsg + constants.voteCommandHelp;
         break;
+      case "votePlayers":
+      case "voteplayers":
+        helpMsg = helpMsg + constants.votePlayersCommandHelp;
+        break;
       case "wheel":
         helpMsg = helpMsg + constants.wheelCommandHelp;
         break;
@@ -125,7 +160,11 @@ function helpCommand(receivedMsg, arguments) {
         helpMsg = helpMsg + constants.randomNumberCommandHelp;
         break;
       default:
-        helpMsg = "`" + command + "` not recognized. Try " + availableCommands;
+        helpMsg =
+          "`" +
+          command +
+          "` not recognized. Try " +
+          constants.availableCommands;
         commandFound = false;
         helperFunc.sendMsg(receivedMsg, helpMsg);
         break;
@@ -141,6 +180,10 @@ function helpCommand(receivedMsg, arguments) {
       constants.voteCommandDesc +
       "\n" +
       constants.voteCommandHelp +
+      "\n\n" +
+      constants.votePlayersCommandDesc +
+      "\n" +
+      constants.votePlayersCommandHelp +
       "\n\n" +
       constants.wheelCommandDesc +
       "\n" +
@@ -185,18 +228,53 @@ function roleCommand(
     let membersWithRole = roleMentioned.members;
     if (membersWithRole.size > 0) {
       let members = roleMentioned.members.filter((member) => !member.user.bot);
+      console.log("members " + members.size);
       if (members.size > 0) {
         let membersArray = members.array();
-        msgTitle = helperFunc.getCustomMsg(
-          msgTitle,
+        // Remove users from members array
+        let membersRemove = helperFunc.getMembersMentionedArray(
+          receivedMsg,
+          arguments,
+          1
+        );
+
+        console.log("members " + membersRemove.length);
+        errMsg = helperFunc.checkMembersArrayForError(membersRemove);
+        if (errMsg != "") {
+          helperFunc.sendMsg(receivedMsg, errMsg);
+          return;
+        }
+
+        console.log("msgTitle: " + msgTitle);
+        // Set message title
+        msgTitle = helperFunc.getCustomMsgMembersRemove(
           primaryCommand,
           fullCommand,
-          mention
+          mention,
+          arguments,
+          membersRemove,
+          msgTitle
         );
+
+        console.log("msg: " + msgTitle);
+        console.log("membersArray.length: " + membersArray.length);
+        // Filter array
+        let membersKept = helperFunc.getFilteredMembersArray(
+          membersRemove,
+          membersArray
+        );
+
+        if (!(membersKept.length > 0)) {
+          errMsg = `Oops! The ${primaryCommand} is empty now.`;
+          helperFunc.sendMsg(receivedMsg, errMsg);
+          return;
+        }
+
         switch (primaryCommand) {
           case "wheel":
-            let memberIndex = helperFunc.getRandomNumber(members.size) - 1;
-            let chosenMember = membersArray[memberIndex];
+            let memberIndex =
+              helperFunc.getRandomNumber(membersKept.length) - 1;
+            let chosenMember = membersKept[memberIndex];
             let msg =
               "**" +
               chosenMember.displayName +
@@ -211,16 +289,15 @@ function roleCommand(
           case "vote":
             var memberCount = 0;
             var voteMsg = "";
-            membersWithRole.forEach((member) => {
-              if (!member.user.bot) {
-                voteMsg =
-                  voteMsg +
-                  constants.reactsAlphabet[memberCount] +
-                  " " +
-                  member.displayName +
-                  "\n\n";
-                memberCount++;
-              }
+
+            membersKept.forEach((member) => {
+              voteMsg =
+                voteMsg +
+                constants.reactsAlphabet[memberCount] +
+                " " +
+                member.displayName +
+                "\n\n";
+              memberCount++;
             });
             if (memberCount > 0) {
               helperFunc.sendMsgWithReacts(
@@ -254,6 +331,65 @@ function roleCommand(
     }
   }
 
+  if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
+}
+
+function votePlayersCommand(receivedMsg, arguments) {
+  let errMsg = "";
+  var msgTitle = "It's time to vote!";
+  let membersMentioned = helperFunc.getMembersMentionedArray(
+    receivedMsg,
+    arguments,
+    0
+  );
+
+  errMsg = helperFunc.checkMembersArrayForError(membersMentioned);
+  if (errMsg != "") {
+    helperFunc.sendMsg(receivedMsg, errMsg);
+    return;
+  }
+
+  msgTitle = helperFunc.getCustomMsgVotePlayers(
+    arguments,
+    membersMentioned,
+    msgTitle
+  );
+
+  if (membersMentioned.length > 0) {
+    let validMembersMentioned = membersMentioned.filter(
+      (member) => !member.user.bot
+    );
+
+    if (validMembersMentioned.length > 0) {
+      var memberCount = 0;
+      var voteMsg = "";
+
+      validMembersMentioned.forEach((member) => {
+        voteMsg =
+          voteMsg +
+          constants.reactsAlphabet[memberCount] +
+          " " +
+          member.displayName +
+          "\n\n";
+        memberCount++;
+      });
+      if (memberCount > 0) {
+        helperFunc.sendMsgWithReacts(
+          receivedMsg,
+          voteMsg,
+          msgTitle,
+          constants.reactsAlphabet,
+          memberCount,
+          "vote"
+        );
+      }
+    } else {
+      errMsg = "No humans were mentioned, only bots.";
+    }
+  } else {
+    errMsg =
+      "No members were mentioned. Try " + constants.votePlayersCommandHelp;
+  }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
 

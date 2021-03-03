@@ -5,6 +5,9 @@ DONE
 /- Wheel -- !wheel [number] [optional: custom message] -- Get random number between 1 and number specified
 /- !vote Custom voting text
 /- randomize fake idol image
+/- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
+/- !vote @role_name @player1 @player2 optional_message -- vote that omits playeres mentioned
+/- !votePlayers - @player1 @player2 @player# optional_message
 
 Permissions
 - Restrict certain commands to be certain role only
@@ -12,29 +15,31 @@ Permissions
 New commands
 - Scott's Stats!!! -- !stats pgp_patron_name - Bot reads it from JSON file
 - Custom poll with custom reacts -- !pollReacts question|choice a:react a|choice b:react b
--? Custom poll -- !poll question|choice a|choice b|choice c (There's poll bot)
--? DWWVD nominations and voting (Kinda complicated and noms aren't that complicated??)
-    - !opennoms 
-        1. use awaitMessages timser set to 30min and filter by the word !nominate
-        2. look for @ of user and edit message embed to say user was nominated
-        3. reaction collector on !nominate message
-        4. if thumbs up added, edit message embed to confirm nomination
-        5. noms closed at end of timer OR on !closenoms 
-    - !closenoms
-        - All nominated get put on vote poll with no kill
-        - knows the mesasge embed from...global variable??
-        - clear the global variable
+- Custom poll -- !poll question|choice a|choice b|choice c (For when poll bot is sleep)
 
 !wheel
-- !wheel @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
-- !wheelRoleExcept @role_name @player1 @player2 @player_n optional_message -- wheel that omits players mentioned
 
 !vote
+- Timer - messages results after timer runs out :o (Set a max) - display countdown, stop it prematurely?
 -? Allow only one reaction per user? (could affect performance)
 -? Graphical representation of votes? (could affect performance)
 -? Only mentioned role members can vote? (sorry ghosties, could also affect performance)
 
+!votePlayers
+-? maybe automate noms for dwwvd??? -- (if timer gets interrupted, it could break)
+
+!votenames or !votenoms
+- Format either:
+    - same as custom poll but it will add peace (no kill) react: 
+        !votenames vote_message|name 1|name 2|name 3
+        !pollnames vote_message|name 1|name 2|name 3
+    - similar to !votePlayers but with pipe to separate optional message:
+        !votenames name1 name2 name3|optional_message
+
 Other
 -? dm help
+-? help just gives list of commands and says to ask help for specific command
+- Add desc to help for single command
+- Add other taz names - caketaz, celebratetaz, celebrationtaz
 
 Nonsense fun stuff
