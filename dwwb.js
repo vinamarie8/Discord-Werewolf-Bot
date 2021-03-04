@@ -150,6 +150,19 @@ function helpCommand(receivedMsg, arguments) {
     var helpMsg = "";
     var commandFound = true;
 
+    // Shourcuts/alternate commands
+    switch (command) {
+      case "number":
+        command = "random";
+        break;
+      case "vp":
+        command = "voteplayers";
+        break;
+      case "wp":
+        command = "wheelplayers";
+        break;
+    }
+
     if (command == "number") command = "random";
     // Help for individual command
     if (helpCommands[command]) {

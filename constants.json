@@ -33,16 +33,16 @@
           "desc": "Start voting poll for all members with mentioned role. Players mentioned will be removed from the vote."  
         },
         "voteplayers": {
-          "help": "`!voteplayers @player1 @player2 optional_message`",
+          "help": "`!voteplayers @player1 @player2 optional_message` or `!vp`",
           "desc": "Start voting poll for players mentioned."  
         },
         "wheel": {
           "help": "`!wheel @role_name @optional_player1 @optional_player2 optional_message`",
-          "desc": "Randomly chooses a player of mentioned role. Players mentioned will be removed from the wheel."
+          "desc": "Choose a random player of mentioned role. Players mentioned will be removed from the wheel."
         },
         "wheelplayers": {
-          "help": "`!wheelplayers @player1 @player2 optional_message`",
-          "desc": "Randomly chooses a player from players mentioned."
+          "help": "`!wheelplayers @player1 @player2 optional_message` or `!wp`",
+          "desc": "Choose a random player from players mentioned."
         },
         "yn": {
           "help": "`!yn yes_or_no_question`",
