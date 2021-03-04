@@ -173,6 +173,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
 }
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
+  title = getTrimTitle(title);
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
     .setColor(constants.embedColor)
@@ -181,12 +182,21 @@ function sendMsgEmbed(receivedMsg, title, sendMsg) {
 }
 
 function sendMsgMemberEmbed(receivedMsg, title, sendMsg, member) {
+  title = getTrimTitle(title);
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
     .setColor(constants.embedColor)
     .setDescription(sendMsg)
     .setImage(member.user.avatarURL());
   return receivedMsg.channel.send(embed);
+}
+
+function getTrimTitle(title) {
+  if (title.length > 256) {
+    let myString = "...MY-";
+    title = title.substring(0, 250) + myString;
+  }
+  return title;
 }
 
 function sendMsg(receivedMsg, sendMsg) {
