@@ -27,20 +27,38 @@
         "🇾",
         "🇿"
       ],
-      "helpInfo": "`&` can be used instead of `!`",
-      "voteCommandHelp": "`!vote @role_name optional_message`\n`!vote @role_name @player1 @player2 @player# optional_message`",
-      "voteCommandDesc":
-        "Start voting poll for all members with mentioned role. Players mentioned will be removed from the vote. Any number of players can be mentioned.",
-      "votePlayersCommandHelp": "`!voteplayers @player1 @player2 @player# optional_message`",
-      "votePlayersCommandDesc": "Start voting poll for players mentioned.",
-      "wheelCommandHelp": "`!wheel @role_name optional_message`\n`!wheel @role_name @player1 @player2 @player# optional_message`",
-      "wheelCommandDesc": "Randomly chooses a player of mentioned role. Players mentioned will be removed from the wheel. Any number of players can be mentioned.",
-      "ynCommandHelp": "`!yn yes_or_no_question`",
-      "ynCommandDesc": "Start a Yes/No poll",
-      "randomNumberCommandHelp": "`!random number` or `!number number`",
-      "randomNumberCommandDesc":
-        "Get random number between 1 and number specified",
-      "availableCommands": "`vote`, `voteplayers`, `wheel`, `yn`, `random`, `number`",
+      "helpCommands": {
+        "vote": {
+          "help": "`!vote @role_name @optional_player1 @optional_player2 optional_message`",
+          "desc": "Start voting poll for all members with mentioned role. Players mentioned will be removed from the vote."  
+        },
+        "voteplayers": {
+          "help": "`!voteplayers @player1 @player2 optional_message`",
+          "desc": "Start voting poll for players mentioned. (Shortcut: `!vp`)"  
+        },
+        "wheel": {
+          "help": "`!wheel @role_name @optional_player1 @optional_player2 optional_message`",
+          "desc": "Choose a random player of mentioned role. Players mentioned will be removed from the wheel."
+        },
+        "wheelplayers": {
+          "help": "`!wheelplayers @player1 @player2 optional_message`",
+          "desc": "Choose a random player from players mentioned. (Shortcut: `!wp`)"
+        },
+        "yn": {
+          "help": "`!yn yes_or_no_question`",
+          "desc": "Start a Yes/No poll"
+        },
+        "random": {
+          "help": "`!random number` or `!number number`",
+          "desc": "Get random number between 1 and number specified"
+        }
+      },
+      "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
+      "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`",
       "embedColor": "#c09edb",
-      "maxImageNumber": 6
+      "maxImageNumber": 6,
+      "voteMsgTitle": "It's time to vote!",
+      "wheelMsgTitle": "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡",
+      "onlyBotsMentioned": "No humans were mentioned, only bots.",
+      "noMembersMentioned": "No members were mentioned."
 }

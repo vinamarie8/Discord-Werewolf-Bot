@@ -55,7 +55,7 @@ function getCustomMsgMembersRemove(
   return msgTitle;
 }
 
-function getCustomMsgVotePlayers(arguments, membersMentioned, msgTitle) {
+function getCustomMsgPlayers(arguments, membersMentioned, msgTitle) {
   let membersMentionedCount = membersMentioned.length;
   let msgIndex = membersMentionedCount;
   if (membersMentionedCount > 0 && !(arguments[msgIndex] == undefined)) {
@@ -114,14 +114,16 @@ function getMembersMentionedArray(receivedMsg, arguments, startIndex) {
     argString = arguments[i];
     // Stop if a role is mentioned
     if (argString.startsWith("<@&")) {
-      err = ["role"];
+      err.push("role");
+      err.push(argString);
       return err;
     }
     // Look for users mentioned
     if (argString.startsWith("<@")) {
       let member = getUserFromMention(argString, receivedMsg);
       if (!member) {
-        err = ["notmember"];
+        err.push("notmember");
+        err.push(argString);
         return err;
       }
       membersMentioned.push(member);
@@ -139,13 +141,13 @@ function checkMembersArrayForError(membersArray) {
     if (membersArray[0].id) return errMsg;
     console.log("membersArray[0]: " + membersArray[0]);
     let errType = membersArray[0].toString();
+    let errArg = membersArray[1].toString();
     switch (errType) {
       case "role":
-        errMsg =
-          "A role was mentioned in list of players. Only specific users can be mentioned.";
+        errMsg = errArg + " is a role. Only specific users can be mentioned.";
         break;
       case "notmember":
-        errMsg = "A user mentioned is not part of this server.";
+        errMsg = errArg + " is not part of this server.";
         break;
       default:
         errMsg =
@@ -171,6 +173,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
 }
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
+  title = getTrimTitle(title);
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
     .setColor(constants.embedColor)
@@ -179,12 +182,21 @@ function sendMsgEmbed(receivedMsg, title, sendMsg) {
 }
 
 function sendMsgMemberEmbed(receivedMsg, title, sendMsg, member) {
+  title = getTrimTitle(title);
   const embed = new Discord.MessageEmbed()
     .setTitle(title)
     .setColor(constants.embedColor)
     .setDescription(sendMsg)
     .setImage(member.user.avatarURL());
   return receivedMsg.channel.send(embed);
+}
+
+function getTrimTitle(title) {
+  if (title.length > 256) {
+    let myString = "...MY-";
+    title = title.substring(0, 250) + myString;
+  }
+  return title;
 }
 
 function sendMsg(receivedMsg, sendMsg) {
@@ -197,7 +209,7 @@ module.exports = {
   getCustomMsg,
   getCustomMsgFromArguments,
   getCustomMsgMembersRemove,
-  getCustomMsgVotePlayers,
+  getCustomMsgPlayers,
   sendMsgWithReacts,
   getRoleFromMention,
   getUserFromMention,
