@@ -51,10 +51,14 @@
         "random": {
           "help": "`!random number` or `!number number`",
           "desc": "Get random number between 1 and number specified"
+        },
+        "poll": {
+          "help": "`!poll question|choice a|choice b|choice c`",
+          "desc": "Start a poll (Also: !polltime or !pt)"
         }
       },
       "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
-      "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`",
+      "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`",
       "embedColor": "#c09edb",
       "maxImageNumber": 6,
       "voteMsgTitle": "It's time to vote!",

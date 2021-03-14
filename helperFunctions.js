@@ -73,7 +73,12 @@ async function sendMsgWithReacts(
   primaryCommand
 ) {
   const msg = await sendMsgEmbed(receivedMsg, sendMsgTitle, sendMsg);
-  if (reactCount > 19) reactCount = 19; // Discord limit of 20 reacts/msg
+  // Discord limit of 20 reacts/msg
+  let reactLimit = 20;
+  if (primaryCommand == "vote") reactLimit = 19;
+  if (reactCount > reactLimit) reactCount = reactLimit;
+
+  // Add reacts
   for (var i = 0; i < reactCount; i++) {
     await msg.react(reacts[i]);
   }
@@ -208,6 +213,16 @@ function sendMsg(receivedMsg, sendMsg) {
   receivedMsg.channel.send(sendMsg);
 }
 
+function cleanPollString(primaryCommand, fullCommand) {
+  let pollString = fullCommand.split(primaryCommand)[1];
+  let pollArgs = pollString.split("|");
+  pollArgs.forEach((pollArg, index) => {
+    pollArgs[index] = pollArg.trim();
+  });
+  pollArgs = pollArgs.filter((pollArg) => pollArg !== "");
+  return pollArgs;
+}
+
 module.exports = {
   sendImg,
   getRandomNumber,
@@ -224,4 +239,5 @@ module.exports = {
   sendMsgEmbed,
   sendMsgMemberEmbed,
   sendMsg,
+  cleanPollString,
 };

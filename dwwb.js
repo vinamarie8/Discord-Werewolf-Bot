@@ -136,6 +136,10 @@ function processCommand(receivedMsg) {
       case "number":
         randomNumberCommand(receivedMsg, arguments);
         break;
+      case "poll":
+      case "polltime":
+      case "pt":
+        pollCommand(receivedMsg, fullCommand);
       default:
         break;
     }
@@ -448,6 +452,46 @@ function randomNumberCommand(receivedMsg, arguments) {
   let randomNumTitle = "Random number between 1 and " + maxNum;
   let randomNum = helperFunc.getRandomNumber(maxNum);
   helperFunc.sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
+}
+
+function pollCommand(receivedMsg, fullCommand) {
+  console.log(fullCommand);
+  if (!fullCommand.includes("|")) {
+    helperFunc.sendMsg(
+      receivedMsg,
+      "Format incorrect. Try " + helpCommands["poll"]["help"]
+    );
+    return;
+  }
+
+  //Clean up poll string
+  pollArgs = helperFunc.cleanPollString("poll", fullCommand);
+
+  console.log(pollArgs.length);
+  if (pollArgs.length < 2) {
+    helperFunc.sendMsg(
+      receivedMsg,
+      "Format incorrect. Try " + helpCommands["poll"]["help"]
+    );
+    return;
+  }
+
+  // Build poll message
+  let question = pollArgs[0];
+  let choices = pollArgs.slice(1);
+  let pollMsg = "";
+  choices.forEach((choice, index) => {
+    pollMsg =
+      pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
+  });
+  helperFunc.sendMsgWithReacts(
+    receivedMsg,
+    pollMsg,
+    question,
+    constants.reactsAlphabet,
+    choices.length,
+    "poll"
+  );
 }
 //#endregion
 
