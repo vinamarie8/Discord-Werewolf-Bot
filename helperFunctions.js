@@ -92,6 +92,11 @@ function getRoleFromMention(mention, receivedMsg) {
     }
     return receivedMsg.guild.roles.cache.get(mention);
   }
+  if (mention == "@everyone") {
+    return receivedMsg.guild.roles.cache.get(
+      receivedMsg.guild.roles.everyone.id
+    );
+  }
 }
 
 function getUserFromMention(mention, receivedMsg) {
