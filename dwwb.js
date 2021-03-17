@@ -28,10 +28,7 @@ client.on("message", (receivedMsg) => {
       processCommand(receivedMsg);
     } catch (error) {
       console.error(error);
-      helperFunc.sendMsg(
-        receivedMsg,
-        "Oops, sorry! There was an error. Please try again."
-      );
+      helperFunc.sendMsg(receivedMsg, "Oops, sorry! There was an error. Please try again.");
     }
   }
 });
@@ -170,14 +167,9 @@ function helpCommand(receivedMsg, arguments) {
     if (command == "number") command = "random";
     // Help for individual command
     if (helpCommands[command]) {
-      helpMsg =
-        helpMsg +
-        helpCommands[command]["desc"] +
-        newLine +
-        helpCommands[command]["help"];
+      helpMsg = helpMsg + helpCommands[command]["desc"] + newLine + helpCommands[command]["help"];
     } else {
-      helpMsg =
-        "`" + command + "` not recognized. Try " + constants.availableCommands;
+      helpMsg = "`" + command + "` not recognized. Try " + constants.availableCommands;
       commandFound = false;
       helperFunc.sendMsg(receivedMsg, helpMsg);
     }
@@ -190,12 +182,7 @@ function helpCommand(receivedMsg, arguments) {
     let fullHelpMsg = constants.helpInfo + newLineDouble;
     for (var i in helpCommands) {
       if (helpCommands[i] instanceof Object) {
-        fullHelpMsg =
-          fullHelpMsg +
-          helpCommands[i]["desc"] +
-          newLine +
-          helpCommands[i]["help"] +
-          newLineDouble;
+        fullHelpMsg = fullHelpMsg + helpCommands[i]["desc"] + newLine + helpCommands[i]["help"] + newLineDouble;
       }
     }
 
@@ -204,37 +191,16 @@ function helpCommand(receivedMsg, arguments) {
 }
 
 function voteCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
-  roleCommand(
-    receivedMsg,
-    arguments,
-    primaryCommand,
-    fullCommand,
-    constants.voteMsgTitle
-  );
+  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, constants.voteMsgTitle);
 }
 
 function wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
-  roleCommand(
-    receivedMsg,
-    arguments,
-    primaryCommand,
-    fullCommand,
-    constants.wheelMsgTitle
-  );
+  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, constants.wheelMsgTitle);
 }
 
-function roleCommand(
-  receivedMsg,
-  arguments,
-  primaryCommand,
-  fullCommand,
-  msgTitle
-) {
+function roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, msgTitle) {
   const mention = arguments[0];
-  const roleMentioned = helperFunc.getRoleFromMention(
-    String(mention),
-    receivedMsg
-  );
+  const roleMentioned = helperFunc.getRoleFromMention(String(mention), receivedMsg);
   let errMsg = "";
 
   if (roleMentioned) {
@@ -245,11 +211,7 @@ function roleCommand(
       if (members.size > 0) {
         let membersArray = members.array();
         // Remove users from members array
-        let membersRemove = helperFunc.getMembersMentionedArray(
-          receivedMsg,
-          arguments,
-          1
-        );
+        let membersRemove = helperFunc.getMembersMentionedArray(receivedMsg, arguments, 1);
 
         console.log("members " + membersRemove.length);
         errMsg = helperFunc.checkMembersArrayForError(membersRemove);
@@ -272,10 +234,7 @@ function roleCommand(
         console.log("msg: " + msgTitle);
         console.log("membersArray.length: " + membersArray.length);
         // Filter array
-        let membersKept = helperFunc.getFilteredMembersArray(
-          membersRemove,
-          membersArray
-        );
+        let membersKept = helperFunc.getFilteredMembersArray(membersRemove, membersArray);
 
         if (!(membersKept.length > 0)) {
           errMsg = `Oops! The ${primaryCommand} is empty now.`;
@@ -285,31 +244,17 @@ function roleCommand(
 
         switch (primaryCommand) {
           case "wheel":
-            let memberIndex =
-              helperFunc.getRandomNumber(membersKept.length) - 1;
+            let memberIndex = helperFunc.getRandomNumber(membersKept.length) - 1;
             let chosenMember = membersKept[memberIndex];
-            let msg =
-              "**" +
-              chosenMember.displayName +
-              "** has been chosen by the wheel!";
-            helperFunc.sendMsgMemberEmbed(
-              receivedMsg,
-              msgTitle,
-              msg,
-              chosenMember
-            );
+            let msg = "**" + chosenMember.displayName + "** has been chosen by the wheel!";
+            helperFunc.sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
             break;
           case "vote":
             var memberCount = 0;
             var voteMsg = "";
 
             membersKept.forEach((member) => {
-              voteMsg =
-                voteMsg +
-                constants.reactsAlphabet[memberCount] +
-                " " +
-                member.displayName +
-                "\n\n";
+              voteMsg = voteMsg + constants.reactsAlphabet[memberCount] + " " + member.displayName + "\n\n";
               memberCount++;
             });
             if (memberCount > 0) {
@@ -338,30 +283,16 @@ function roleCommand(
 }
 
 function votePlayersCommand(receivedMsg, arguments, primaryCommand) {
-  playersCommand(
-    receivedMsg,
-    arguments,
-    primaryCommand,
-    constants.voteMsgTitle
-  );
+  playersCommand(receivedMsg, arguments, primaryCommand, constants.voteMsgTitle);
 }
 
 function wheelPlayersCommand(receivedMsg, arguments, primaryCommand) {
-  playersCommand(
-    receivedMsg,
-    arguments,
-    primaryCommand,
-    constants.wheelMsgTitle
-  );
+  playersCommand(receivedMsg, arguments, primaryCommand, constants.wheelMsgTitle);
 }
 
 function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
   let errMsg = "";
-  let membersMentioned = helperFunc.getMembersMentionedArray(
-    receivedMsg,
-    arguments,
-    0
-  );
+  let membersMentioned = helperFunc.getMembersMentionedArray(receivedMsg, arguments, 0);
 
   errMsg = helperFunc.checkMembersArrayForError(membersMentioned);
   if (errMsg != "") {
@@ -369,56 +300,29 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
     return;
   }
 
-  msgTitle = helperFunc.getCustomMsgPlayers(
-    arguments,
-    membersMentioned,
-    msgTitle
-  );
+  msgTitle = helperFunc.getCustomMsgPlayers(arguments, membersMentioned, msgTitle);
 
   if (membersMentioned.length > 0) {
-    let validMembersMentioned = membersMentioned.filter(
-      (member) => !member.user.bot
-    );
+    let validMembersMentioned = membersMentioned.filter((member) => !member.user.bot);
 
     if (validMembersMentioned.length > 0) {
       switch (primaryCommand) {
         case "wheelplayers":
-          let memberIndex =
-            helperFunc.getRandomNumber(validMembersMentioned.length) - 1;
+          let memberIndex = helperFunc.getRandomNumber(validMembersMentioned.length) - 1;
           let chosenMember = validMembersMentioned[memberIndex];
-          let msg =
-            "**" +
-            chosenMember.displayName +
-            "** has been chosen by the wheel!";
-          helperFunc.sendMsgMemberEmbed(
-            receivedMsg,
-            msgTitle,
-            msg,
-            chosenMember
-          );
+          let msg = "**" + chosenMember.displayName + "** has been chosen by the wheel!";
+          helperFunc.sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
           break;
         case "voteplayers":
           var memberCount = 0;
           var voteMsg = "";
 
           validMembersMentioned.forEach((member) => {
-            voteMsg =
-              voteMsg +
-              constants.reactsAlphabet[memberCount] +
-              " " +
-              member.displayName +
-              newLineDouble;
+            voteMsg = voteMsg + constants.reactsAlphabet[memberCount] + " " + member.displayName + newLineDouble;
             memberCount++;
           });
           if (memberCount > 0) {
-            helperFunc.sendMsgWithReacts(
-              receivedMsg,
-              voteMsg,
-              msgTitle,
-              constants.reactsAlphabet,
-              memberCount,
-              "vote"
-            );
+            helperFunc.sendMsgWithReacts(receivedMsg, voteMsg, msgTitle, constants.reactsAlphabet, memberCount, "vote");
           }
           break;
       }
@@ -426,10 +330,7 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
       errMsg = constants.onlyBotsMentioned;
     }
   } else {
-    errMsg =
-      constants.noMembersMentioned +
-      " Try " +
-      helpCommands[primaryCommand]["help"];
+    errMsg = constants.noMembersMentioned + " Try " + helpCommands[primaryCommand]["help"];
   }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
@@ -457,10 +358,7 @@ function randomNumberCommand(receivedMsg, arguments) {
 function pollCommand(receivedMsg, fullCommand) {
   console.log(fullCommand);
   if (!fullCommand.includes("|")) {
-    helperFunc.sendMsg(
-      receivedMsg,
-      "Format incorrect. Try " + helpCommands["poll"]["help"]
-    );
+    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
     return;
   }
 
@@ -469,10 +367,7 @@ function pollCommand(receivedMsg, fullCommand) {
 
   console.log(pollArgs.length);
   if (pollArgs.length < 2) {
-    helperFunc.sendMsg(
-      receivedMsg,
-      "Format incorrect. Try " + helpCommands["poll"]["help"]
-    );
+    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
     return;
   }
 
@@ -481,17 +376,9 @@ function pollCommand(receivedMsg, fullCommand) {
   let choices = pollArgs.slice(1);
   let pollMsg = "";
   choices.forEach((choice, index) => {
-    pollMsg =
-      pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
+    pollMsg = pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
   });
-  helperFunc.sendMsgWithReacts(
-    receivedMsg,
-    pollMsg,
-    question,
-    constants.reactsAlphabet,
-    choices.length,
-    "poll"
-  );
+  helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, constants.reactsAlphabet, choices.length, "poll");
 }
 //#endregion
 
