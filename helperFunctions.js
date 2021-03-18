@@ -192,10 +192,8 @@ function sendMsg(receivedMsg, sendMsg) {
   receivedMsg.channel.send(sendMsg);
 }
 
-function cleanPollString(primaryCommand, fullCommand, delimiter, isFullPoll) {
-  let pollString = fullCommand;
-  if (isFullPoll) pollString = fullCommand.split(primaryCommand)[1];
-  let pollArgs = pollString.split(delimiter);
+function cleanPollString(fullArgs, delimiter) {
+  let pollArgs = fullArgs.split(delimiter);
   pollArgs.forEach((pollArg, index) => {
     pollArgs[index] = pollArg.trim();
   });

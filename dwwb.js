@@ -47,9 +47,11 @@ function processCommand(receivedMsg) {
   let splitCommand = fullCommand.split(" "); // Split the message up in to pieces for each space
   let primaryCommand = splitCommand[0]; // The first word directly after the exclamation is the command
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
+  let fullArgs = arguments.join(" ");
 
   console.log("Command received: " + primaryCommand);
   console.log("Arguments: " + arguments); // There may not be any arguments
+  console.log("Arguments combined: " + fullArgs);
 
   primaryCommand = String(primaryCommand).toLowerCase();
   if (prefix == "?") {
@@ -137,11 +139,11 @@ function processCommand(receivedMsg) {
       case "poll":
       case "polltime":
       case "pt":
-        pollCommand(receivedMsg, primaryCommand, fullCommand);
+        pollCommand(receivedMsg, primaryCommand, fullArgs);
         break;
       case "pollreacts":
       case "pr":
-        pollReactsCommand(receivedMsg, primaryCommand, fullCommand);
+        pollReactsCommand(receivedMsg, primaryCommand, fullArgs);
         break;
       default:
         break;
@@ -370,15 +372,15 @@ function randomNumberCommand(receivedMsg, arguments) {
   }
 }
 
-function pollCommand(receivedMsg, primaryCommand, fullCommand) {
-  console.log(fullCommand);
-  if (!fullCommand.includes("|")) {
+function pollCommand(receivedMsg, primaryCommand, fullArgs) {
+  console.log(fullArgs);
+  if (!fullArgs.includes("|")) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
     return;
   }
 
   //Clean up poll string
-  let pollArgs = helperFunc.cleanPollString(primaryCommand, fullCommand, "|", true);
+  let pollArgs = helperFunc.cleanPollString(fullArgs, "|");
 
   if (pollArgs.length < 2) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
@@ -395,15 +397,15 @@ function pollCommand(receivedMsg, primaryCommand, fullCommand) {
   helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, constants.reactsAlphabet, choices.length, "poll");
 }
 
-function pollReactsCommand(receivedMsg, primaryCommand, fullCommand) {
-  console.log(String(fullCommand));
-  if (!fullCommand.includes("|")) {
+function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
+  console.log(String(fullArgs));
+  if (!fullArgs.includes("|")) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
     return;
   }
 
   //Clean up poll string
-  let pollArgs = helperFunc.cleanPollString(primaryCommand, fullCommand, "|", true);
+  let pollArgs = helperFunc.cleanPollString(fullArgs, "|");
 
   if (pollArgs.length < 2) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
@@ -418,7 +420,7 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullCommand) {
   var errMsg = "";
   choices.every((choice, index) => {
     // Check formatting
-    let choiceArgs = helperFunc.cleanPollString(primaryCommand, choice, "=", false);
+    let choiceArgs = helperFunc.cleanPollString(choice, "=");
     console.log(choiceArgs);
     console.log(choiceArgs.length);
     if (choiceArgs.length != 2) {
