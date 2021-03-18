@@ -18,10 +18,12 @@ function getRandomNumber(maxNumber) {
   return (randomNumber = Math.floor(Math.random() * maxNumber) + 1);
 }
 
-function getCustomMsg(defaultMsg, primaryCommand, fullCommand, mention) {
+function getCustomMsg(defaultMsg, fullArgs, mention) {
   let returnMsg = defaultMsg;
-  let customMsg = fullCommand.split(primaryCommand + " " + mention + " ");
-  if (customMsg.length > 1) {
+  let customMsg = fullArgs.split(mention);
+  console.log("customMsg here:" + customMsg);
+  console.log(customMsg.length);
+  if (customMsg.length > 1 && customMsg[1] != "") {
     returnMsg = customMsg[1];
   }
   return returnMsg;
@@ -37,14 +39,14 @@ function getCustomMsgFromArguments(defaultMsg, arguments, index) {
   return returnMsg;
 }
 
-function getCustomMsgMembersRemove(primaryCommand, fullCommand, mention, arguments, membersRemove, msgTitle) {
+function getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle) {
   let membersRemoveCount = membersRemove.length;
   let msgIndex = membersRemoveCount + 1;
   console.log("membersRemoveCount: " + membersRemoveCount);
   if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
     msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
   } else if (!(membersRemoveCount > 0)) {
-    msgTitle = getCustomMsg(msgTitle, primaryCommand, fullCommand, mention);
+    msgTitle = getCustomMsg(msgTitle, fullArgs, mention);
   }
   return msgTitle;
 }

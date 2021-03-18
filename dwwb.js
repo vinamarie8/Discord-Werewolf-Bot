@@ -49,9 +49,9 @@ function processCommand(receivedMsg) {
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
   let fullArgs = arguments.join(" ");
 
-  console.log("Command received: " + primaryCommand);
-  console.log("Arguments: " + arguments); // There may not be any arguments
-  console.log("Arguments combined: " + fullArgs);
+  console.log("Command received:" + primaryCommand);
+  console.log("Arguments:" + arguments); // There may not be any arguments
+  console.log("Arguments combined:" + fullArgs);
 
   primaryCommand = String(primaryCommand).toLowerCase();
   if (prefix == "?") {
@@ -64,7 +64,7 @@ function processCommand(receivedMsg) {
         helpCommand(receivedMsg, arguments);
         break;
       case "vote":
-        voteCommand(receivedMsg, arguments, primaryCommand, fullCommand);
+        voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
       case "voteplayer":
       case "voteplayers":
@@ -77,10 +77,10 @@ function processCommand(receivedMsg) {
         wheelPlayersCommand(receivedMsg, arguments, "wheelplayers");
         break;
       case "wheel":
-        wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand);
+        wheelCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
       case "yn":
-        yesNoCommand(receivedMsg, fullCommand);
+        yesNoCommand(receivedMsg, fullArgs);
         break;
       case "my":
       case "if":
@@ -203,15 +203,15 @@ function helpCommand(receivedMsg, arguments) {
   }
 }
 
-function voteCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
-  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, constants.voteMsgTitle);
+function voteCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
+  roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, constants.voteMsgTitle);
 }
 
-function wheelCommand(receivedMsg, arguments, primaryCommand, fullCommand) {
-  roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, constants.wheelMsgTitle);
+function wheelCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
+  roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, constants.wheelMsgTitle);
 }
 
-function roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, msgTitle) {
+function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle) {
   const mention = arguments[0];
   const roleMentioned = helperFunc.getRoleFromMention(String(mention), receivedMsg);
   let errMsg = "";
@@ -235,14 +235,7 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullCommand, msgTit
 
         console.log("msgTitle: " + msgTitle);
         // Set message title
-        msgTitle = helperFunc.getCustomMsgMembersRemove(
-          primaryCommand,
-          fullCommand,
-          mention,
-          arguments,
-          membersRemove,
-          msgTitle
-        );
+        msgTitle = helperFunc.getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle);
 
         console.log("msg: " + msgTitle);
         console.log("membersArray.length: " + membersArray.length);
@@ -348,12 +341,12 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
 
-function yesNoCommand(receivedMsg, fullCommand) {
+function yesNoCommand(receivedMsg, fullArgs) {
   let pollMsg = "Yes or No?";
-  let customMsg = fullCommand.split("yn ");
+  let customMsg = fullArgs;
   let reactsYN = ["👍", "👎"];
   if (customMsg.length > 1) {
-    pollMsg = customMsg[1] + "\n";
+    pollMsg = customMsg + "\n";
   }
   helperFunc.sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
 }
