@@ -210,16 +210,13 @@ function checkReact(client, reactString, customReacts) {
   const reactExists = customReacts.includes(reactString);
   if (reactExists) return "Sorry, emojis can be used only once.";
 
-  //Check for animated emoji
-  if (reactString.startsWith("<a:")) return "Sorry, animated emojis can't be used.";
-
   //Check for discord emoji
   console.log("reactstring:" + reactString);
   let emojiInfo = reactString.match(/\d+/g);
   if (emojiInfo != null) {
     let discordReact = client.emojis.cache.get(emojiInfo[0]);
     if (discordReact == null) {
-      return "Sorry, '" + reactString + "' is not in this server.";
+      return "Sorry, DWWVD/Z Bot does not have access to the emoji '" + reactString + "'";
     } else {
       //Returning empty error message because it is a valid discord emoji
       return errMsg;
