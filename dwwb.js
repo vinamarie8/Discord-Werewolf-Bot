@@ -423,21 +423,21 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullCommand) {
     console.log(choiceArgs.length);
     if (choiceArgs.length != 2) {
       console.log(errMsg);
-      errMsg = "Sorry, '=' can only be used once per choice. Try " + helpCommands["pollreacts"]["help"];
+      errMsg = "Sorry, one '=' is required per choice. Try " + helpCommands["pollreacts"]["help"];
       return false;
     }
 
     let choiceMsg = choiceArgs[0];
     let choiceReact = choiceArgs[1];
     // Check if react is valid
-    checkReact = helperFunc.checkReact(client, choiceReact, customReacts);
-    if (checkReact != "" && checkReact == "unicode") {
-      console.log("choicereact " + choiceReact);
-      const regexEmoji = emojiRegex();
-      choiceReact = regexEmoji.exec(choiceReact)[0];
-    } else if (checkReact != "" && checkReact.startsWith("Sorry")) {
+    checkReact = helperFunc.checkReact(client, choiceReact, customReacts, choiceMsg);
+    let strReturned =
+      typeof checkReact === "string" && Object.prototype.toString.call(checkReact) === "[object String]";
+    if (strReturned && checkReact != "" && checkReact.startsWith("Sorry")) {
       errMsg = checkReact;
       return false;
+    } else {
+      choiceReact = checkReact;
     }
 
     // Add choice and react to poll message

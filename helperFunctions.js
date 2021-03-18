@@ -203,7 +203,7 @@ function cleanPollString(primaryCommand, fullCommand, delimiter, isFullPoll) {
   return pollArgs;
 }
 
-function checkReact(client, reactString, customReacts) {
+function checkReact(client, reactString, customReacts, choiceMsg) {
   let errMsg = "";
 
   //Check if it already exists in list of reacts
@@ -218,20 +218,17 @@ function checkReact(client, reactString, customReacts) {
     if (discordReact == null) {
       return "Sorry, DWWVD/Z Bot does not have access to the emoji '" + reactString + "'";
     } else {
-      //Returning empty error message because it is a valid discord emoji
-      return errMsg;
+      return reactString;
     }
   }
 
   //Check for unicode emoji
   const regexEmoji = emojiRegex();
-  let react = regexEmoji.exec(reactString);
-  console.log("unicode: " + react);
-  if (react != null) return "unicode";
+  let unicodeReactMatch = regexEmoji.exec(reactString);
+  if (unicodeReactMatch != null) return unicodeReactMatch[0];
 
-  if (emojiInfo == null) return "Sorry, '" + reactString + "' is not a valid emoji.";
+  errMsg = "Sorry, no valid emoji found for '" + choiceMsg + "'";
 
-  console.log("emoji" + emojiInfo);
   return errMsg;
 }
 
