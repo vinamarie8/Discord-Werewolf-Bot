@@ -6,6 +6,7 @@ const constants = require("./constants.json");
 const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
+const emojiRegex = require("emoji-regex/text.js");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -136,7 +137,12 @@ function processCommand(receivedMsg) {
       case "poll":
       case "polltime":
       case "pt":
-        pollCommand(receivedMsg, fullCommand);
+        pollCommand(receivedMsg, primaryCommand, fullCommand);
+        break;
+      case "pollreacts":
+      case "pr":
+        pollReactsCommand(receivedMsg, primaryCommand, fullCommand);
+        break;
       default:
         break;
     }
@@ -162,9 +168,14 @@ function helpCommand(receivedMsg, arguments) {
       case "wp":
         command = "wheelplayers";
         break;
+      case "polltime":
+      case "pt":
+        command = "poll";
+      case "pr":
+        command = "pollreacts";
+        break;
     }
 
-    if (command == "number") command = "random";
     // Help for individual command
     if (helpCommands[command]) {
       helpMsg = helpMsg + helpCommands[command]["desc"] + newLine + helpCommands[command]["help"];
@@ -355,7 +366,7 @@ function randomNumberCommand(receivedMsg, arguments) {
   helperFunc.sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
 }
 
-function pollCommand(receivedMsg, fullCommand) {
+function pollCommand(receivedMsg, primaryCommand, fullCommand) {
   console.log(fullCommand);
   if (!fullCommand.includes("|")) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
@@ -363,9 +374,8 @@ function pollCommand(receivedMsg, fullCommand) {
   }
 
   //Clean up poll string
-  pollArgs = helperFunc.cleanPollString("poll", fullCommand);
+  let pollArgs = helperFunc.cleanPollString(primaryCommand, fullCommand, "|", true);
 
-  console.log(pollArgs.length);
   if (pollArgs.length < 2) {
     helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
     return;
@@ -379,6 +389,67 @@ function pollCommand(receivedMsg, fullCommand) {
     pollMsg = pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
   });
   helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, constants.reactsAlphabet, choices.length, "poll");
+}
+
+function pollReactsCommand(receivedMsg, primaryCommand, fullCommand) {
+  console.log(String(fullCommand));
+  if (!fullCommand.includes("|")) {
+    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
+    return;
+  }
+
+  //Clean up poll string
+  let pollArgs = helperFunc.cleanPollString(primaryCommand, fullCommand, "|", true);
+
+  if (pollArgs.length < 2) {
+    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
+    return;
+  }
+
+  // Build poll message
+  let question = pollArgs[0];
+  let choices = pollArgs.slice(1);
+  let pollMsg = "";
+  let customReacts = [];
+  var errMsg = "";
+  choices.every((choice, index) => {
+    // Check formatting
+    let choiceArgs = helperFunc.cleanPollString(primaryCommand, choice, "=", false);
+    console.log(choiceArgs);
+    console.log(choiceArgs.length);
+    if (choiceArgs.length != 2) {
+      console.log(errMsg);
+      errMsg = "Sorry, '=' can only be used once per choice. Try " + helpCommands["pollreacts"]["help"];
+      return false;
+    }
+
+    let choiceMsg = choiceArgs[0];
+    let choiceReact = choiceArgs[1];
+    // Check if react is valid
+    checkReact = helperFunc.checkReact(client, choiceReact, customReacts);
+    if (checkReact != "" && checkReact == "unicode") {
+      console.log("choicereact " + choiceReact);
+      const regexEmoji = emojiRegex();
+      choiceReact = regexEmoji.exec(choiceReact)[0];
+    } else if (checkReact != "" && checkReact.startsWith("Sorry")) {
+      errMsg = checkReact;
+      return false;
+    }
+
+    // Add choice and react to poll message
+    pollMsg = pollMsg + choiceReact + " " + choiceMsg + newLineDouble;
+    customReacts.push(choiceReact);
+    return true;
+  });
+
+  // Send poll with reacts
+  if (errMsg == "") {
+    console.log(pollMsg + " " + question);
+    console.log(customReacts);
+    helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, customReacts, customReacts.length, primaryCommand);
+  } else {
+    helperFunc.sendMsg(receivedMsg, errMsg);
+  }
 }
 //#endregion
 

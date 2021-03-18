@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const constants = require("./constants.json");
+const emojiRegex = require("emoji-regex/text.js");
 
 function sendImg(receivedMsg, imageName, textMsg) {
   if (imageName == "idol") {
@@ -36,14 +37,7 @@ function getCustomMsgFromArguments(defaultMsg, arguments, index) {
   return returnMsg;
 }
 
-function getCustomMsgMembersRemove(
-  primaryCommand,
-  fullCommand,
-  mention,
-  arguments,
-  membersRemove,
-  msgTitle
-) {
+function getCustomMsgMembersRemove(primaryCommand, fullCommand, mention, arguments, membersRemove, msgTitle) {
   let membersRemoveCount = membersRemove.length;
   let msgIndex = membersRemoveCount + 1;
   console.log("membersRemoveCount: " + membersRemoveCount);
@@ -64,14 +58,7 @@ function getCustomMsgPlayers(arguments, membersMentioned, msgTitle) {
   return msgTitle;
 }
 
-async function sendMsgWithReacts(
-  receivedMsg,
-  sendMsg,
-  sendMsgTitle,
-  reacts,
-  reactCount,
-  primaryCommand
-) {
+async function sendMsgWithReacts(receivedMsg, sendMsg, sendMsgTitle, reacts, reactCount, primaryCommand) {
   const msg = await sendMsgEmbed(receivedMsg, sendMsgTitle, sendMsg);
   // Discord limit of 20 reacts/msg
   let reactLimit = 20;
@@ -98,9 +85,7 @@ function getRoleFromMention(mention, receivedMsg) {
     return receivedMsg.guild.roles.cache.get(mention);
   }
   if (mention == "@everyone") {
-    return receivedMsg.guild.roles.cache.get(
-      receivedMsg.guild.roles.everyone.id
-    );
+    return receivedMsg.guild.roles.cache.get(receivedMsg.guild.roles.everyone.id);
   }
 }
 
@@ -160,8 +145,7 @@ function checkMembersArrayForError(membersArray) {
         errMsg = errArg + " is not part of this server.";
         break;
       default:
-        errMsg =
-          "Oops, sorry! There was an error. Check the formatting and try again.";
+        errMsg = "Oops, sorry! There was an error. Check the formatting and try again.";
         break;
     }
   }
@@ -172,9 +156,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
   let membersKept = [];
   let membersRemoveCount = membersRemove.length;
   if (membersRemoveCount > 0) {
-    membersKept = membersArray.filter(
-      (member) => !membersRemove.includes(member)
-    );
+    membersKept = membersArray.filter((member) => !membersRemove.includes(member));
   } else {
     membersKept = membersArray;
   }
@@ -184,10 +166,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
   title = getTrimTitle(title);
-  const embed = new Discord.MessageEmbed()
-    .setTitle(title)
-    .setColor(constants.embedColor)
-    .setDescription(sendMsg);
+  const embed = new Discord.MessageEmbed().setTitle(title).setColor(constants.embedColor).setDescription(sendMsg);
   return receivedMsg.channel.send(embed);
 }
 
@@ -213,14 +192,50 @@ function sendMsg(receivedMsg, sendMsg) {
   receivedMsg.channel.send(sendMsg);
 }
 
-function cleanPollString(primaryCommand, fullCommand) {
-  let pollString = fullCommand.split(primaryCommand)[1];
-  let pollArgs = pollString.split("|");
+function cleanPollString(primaryCommand, fullCommand, delimiter, isFullPoll) {
+  let pollString = fullCommand;
+  if (isFullPoll) pollString = fullCommand.split(primaryCommand)[1];
+  let pollArgs = pollString.split(delimiter);
   pollArgs.forEach((pollArg, index) => {
     pollArgs[index] = pollArg.trim();
   });
   pollArgs = pollArgs.filter((pollArg) => pollArg !== "");
   return pollArgs;
+}
+
+function checkReact(client, reactString, customReacts) {
+  let errMsg = "";
+
+  //Check if it already exists in list of reacts
+  const reactExists = customReacts.includes(reactString);
+  if (reactExists) return "Sorry, emojis can be used only once.";
+
+  //Check for animated emoji
+  if (reactString.startsWith("<a:")) return "Sorry, animated emojis can't be used.";
+
+  //Check for discord emoji
+  console.log("reactstring:" + reactString);
+  let emojiInfo = reactString.match(/\d+/g);
+  if (emojiInfo != null) {
+    let discordReact = client.emojis.cache.get(emojiInfo[0]);
+    if (discordReact == null) {
+      return "Sorry, '" + reactString + "' is not in this server.";
+    } else {
+      //Returning empty error message because it is a valid discord emoji
+      return errMsg;
+    }
+  }
+
+  //Check for unicode emoji
+  const regexEmoji = emojiRegex();
+  let react = regexEmoji.exec(reactString);
+  console.log("unicode: " + react);
+  if (react != null) return "unicode";
+
+  if (emojiInfo == null) return "Sorry, '" + reactString + "' is not a valid emoji.";
+
+  console.log("emoji" + emojiInfo);
+  return errMsg;
 }
 
 module.exports = {
@@ -240,4 +255,5 @@ module.exports = {
   sendMsgMemberEmbed,
   sendMsg,
   cleanPollString,
+  checkReact,
 };
