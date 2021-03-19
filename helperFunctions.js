@@ -230,14 +230,16 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
     if (discordReact == null) {
       return "Sorry, DWWVD/Z Bot does not have access to the emoji '" + reactString + "'";
     } else {
-      return reactString;
+      return discordReact.toString();
     }
   }
 
   //Check for unicode emoji
   const regexEmoji = emojiRegex();
   let unicodeReactMatch = regexEmoji.exec(reactString);
-  if (unicodeReactMatch != null) return unicodeReactMatch[0];
+  if (unicodeReactMatch != null) {
+    return unicodeReactMatch[0];
+  }
 
   errMsg = "Sorry, no valid emoji found for '" + choiceMsg + "'";
 
