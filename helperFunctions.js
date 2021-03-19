@@ -224,8 +224,9 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
 
   //Check for discord emoji
   console.log("reactstring:" + reactString);
+  let discordEmojiMatch = reactString.match(/<a:.+?:\d+>|<:.+?:\d+>/g);
   let emojiInfo = reactString.match(/\d+/g);
-  if (emojiInfo != null) {
+  if (discordEmojiMatch != null && emojiInfo != null) {
     let discordReact = client.emojis.cache.get(emojiInfo[0]);
     if (discordReact == null) {
       return "Sorry, DWWVD/Z Bot does not have access to the emoji '" + reactString + "'";
@@ -237,7 +238,8 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
   //Check for unicode emoji
   const regexEmoji = emojiRegex();
   let unicodeReactMatch = regexEmoji.exec(reactString);
-  if (unicodeReactMatch != null) {
+  let numberOrCharMatch = reactString.match(/[\d*#]/g);
+  if (unicodeReactMatch != null && numberOrCharMatch == null) {
     return unicodeReactMatch[0];
   }
 
