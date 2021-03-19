@@ -49,6 +49,13 @@ function processCommand(receivedMsg) {
   let arguments = splitCommand.slice(1); // All other words are arguments/parameters/options for the command
   let fullArgs = arguments.join(" ");
 
+  //Clean string from mentions - replace mention id with plain string
+  let processStringCleaned = receivedMsg.cleanContent;
+  let fullCommandCleaned = processStringCleaned.substr(1);
+  let splitCommandCleaned = fullCommandCleaned.split(" ");
+  let argsCleaned = splitCommandCleaned.slice(1);
+  let fullArgsCleaned = argsCleaned.join(" ");
+
   console.log("Command received:" + primaryCommand);
   console.log("Arguments:" + arguments); // There may not be any arguments
   console.log("Arguments combined:" + fullArgs);
@@ -80,7 +87,7 @@ function processCommand(receivedMsg) {
         wheelCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
       case "yn":
-        yesNoCommand(receivedMsg, fullArgs);
+        yesNoCommand(receivedMsg, fullArgsCleaned);
         break;
       case "my":
       case "if":
@@ -139,11 +146,11 @@ function processCommand(receivedMsg) {
       case "poll":
       case "polltime":
       case "pt":
-        pollCommand(receivedMsg, fullArgs);
+        pollCommand(receivedMsg, fullArgsCleaned);
         break;
       case "pollreacts":
       case "pr":
-        pollReactsCommand(receivedMsg, primaryCommand, fullArgs);
+        pollReactsCommand(receivedMsg, primaryCommand, fullArgsCleaned);
         break;
       default:
         break;
@@ -216,6 +223,8 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
   const roleMentioned = helperFunc.getRoleFromMention(String(mention), receivedMsg);
   let errMsg = "";
 
+  console.log(receivedMsg);
+  console.log("cleaned" + receivedMsg.cleanContent);
   if (roleMentioned) {
     let membersWithRole = roleMentioned.members;
     if (membersWithRole.size > 0) {
@@ -235,7 +244,14 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
 
         console.log("msgTitle: " + msgTitle);
         // Set message title
-        msgTitle = helperFunc.getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle);
+        msgTitle = helperFunc.getCustomMsgMembersRemove(
+          fullArgs,
+          mention,
+          arguments,
+          membersRemove,
+          msgTitle,
+          receivedMsg
+        );
 
         console.log("msg: " + msgTitle);
         console.log("membersArray.length: " + membersArray.length);
@@ -306,7 +322,7 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
     return;
   }
 
-  msgTitle = helperFunc.getCustomMsgPlayers(arguments, membersMentioned, msgTitle);
+  msgTitle = helperFunc.getCustomMsgPlayers(arguments, membersMentioned, msgTitle, receivedMsg);
 
   if (membersMentioned.length > 0) {
     let validMembersMentioned = membersMentioned.filter((member) => !member.user.bot);

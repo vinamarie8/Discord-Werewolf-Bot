@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const constants = require("./constants.json");
 const emojiRegex = require("emoji-regex/text.js");
+const { Util } = require("discord.js");
 
 function sendImg(receivedMsg, imageName, textMsg) {
   if (imageName == "idol") {
@@ -18,20 +19,11 @@ function getRandomNumber(maxNumber) {
   return (randomNumber = Math.floor(Math.random() * maxNumber) + 1);
 }
 
-function getCustomMsg(defaultMsg, fullArgs, mention) {
-  let returnMsg = defaultMsg;
-  let customMsg = fullArgs.split(mention);
-  console.log("customMsg here:" + customMsg);
-  console.log(customMsg.length);
-  if (customMsg.length > 1 && customMsg[1] != "") {
-    returnMsg = customMsg[1];
-  }
-  return returnMsg;
-}
-
-function getCustomMsgFromArguments(defaultMsg, arguments, index) {
+function getCustomMsgFromArguments(defaultMsg, arguments, index, receivedMsg) {
   let returnMsg = defaultMsg;
   let argsWanted = arguments.slice(index);
+
+  argsWanted = getArgsCleaned(argsWanted, receivedMsg);
   let customMsg = argsWanted.join(" ");
   if (customMsg.length > 1) {
     returnMsg = customMsg;
@@ -39,23 +31,43 @@ function getCustomMsgFromArguments(defaultMsg, arguments, index) {
   return returnMsg;
 }
 
-function getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle) {
+function getArgsCleaned(argsToClean, receivedMsg) {
+  // Replace mention with string
+  console.log("args before:" + argsToClean);
+  for (var i in argsToClean) {
+    let mentionedRole = getRoleFromMention(argsToClean[i], receivedMsg);
+    if (mentionedRole) {
+      argsToClean[i] = "@" + mentionedRole.name;
+      continue;
+    }
+
+    let mentionedMember = getUserFromMention(argsToClean[i], receivedMsg);
+    if (mentionedMember) {
+      argsToClean[i] = "@" + mentionedMember.displayName;
+      continue;
+    }
+  }
+  console.log("args after:" + argsToClean);
+  return argsToClean;
+}
+
+function getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle, receivedMsg) {
   let membersRemoveCount = membersRemove.length;
   let msgIndex = membersRemoveCount + 1;
   console.log("membersRemoveCount: " + membersRemoveCount);
   if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
-    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
+    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex, receivedMsg);
   } else if (!(membersRemoveCount > 0)) {
-    msgTitle = getCustomMsg(msgTitle, fullArgs, mention);
+    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, 1, receivedMsg);
   }
   return msgTitle;
 }
 
-function getCustomMsgPlayers(arguments, membersMentioned, msgTitle) {
+function getCustomMsgPlayers(arguments, membersMentioned, msgTitle, receivedMsg) {
   let membersMentionedCount = membersMentioned.length;
   let msgIndex = membersMentionedCount;
   if (membersMentionedCount > 0 && !(arguments[msgIndex] == undefined)) {
-    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex);
+    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex, receivedMsg);
   }
   return msgTitle;
 }
@@ -264,7 +276,6 @@ function restoreSpoilerTag(pollString) {
 module.exports = {
   sendImg,
   getRandomNumber,
-  getCustomMsg,
   getCustomMsgFromArguments,
   getCustomMsgMembersRemove,
   getCustomMsgPlayers,
