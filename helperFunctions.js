@@ -232,6 +232,35 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
   return errMsg;
 }
 
+function checkPollString(fullArgs) {
+  if (!fullArgs.includes("|")) {
+    return "Format incorrect.";
+  }
+  if (fullArgs.includes("||")) {
+    console.log("before:" + fullArgs);
+    fullArgs = replaceSpoilerTag(fullArgs);
+    console.log("after:" + fullArgs);
+  }
+  //Clean up poll string
+  let pollArgs = cleanPollString(fullArgs, "|");
+
+  if (pollArgs.length < 2) {
+    return "Format incorrect.";
+  }
+
+  return pollArgs;
+}
+
+function replaceSpoilerTag(fullArgs) {
+  // Temporarily replace spoiler tag so that it does not interfere with '|' delimiter
+  return fullArgs.split("||").join("@#$%^spoiler@#$%^");
+}
+
+function restoreSpoilerTag(pollString) {
+  // Put spoiler tag back
+  return pollString.split("@#$%^spoiler@#$%^").join("||");
+}
+
 module.exports = {
   sendImg,
   getRandomNumber,
@@ -250,4 +279,6 @@ module.exports = {
   sendMsg,
   cleanPollString,
   checkReact,
+  checkPollString,
+  restoreSpoilerTag,
 };

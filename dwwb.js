@@ -139,7 +139,7 @@ function processCommand(receivedMsg) {
       case "poll":
       case "polltime":
       case "pt":
-        pollCommand(receivedMsg, primaryCommand, fullArgs);
+        pollCommand(receivedMsg, fullArgs);
         break;
       case "pollreacts":
       case "pr":
@@ -365,20 +365,15 @@ function randomNumberCommand(receivedMsg, arguments) {
   }
 }
 
-function pollCommand(receivedMsg, primaryCommand, fullArgs) {
+function pollCommand(receivedMsg, fullArgs) {
   console.log(fullArgs);
-  if (!fullArgs.includes("|")) {
-    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
+  let checkPollArgs = helperFunc.checkPollString(fullArgs);
+  if (typeof checkPollArgs === "string") {
+    let errMsg = checkPollArgs + " Try " + helpCommands["poll"]["help"];
+    helperFunc.sendMsg(receivedMsg, errMsg);
     return;
   }
-
-  //Clean up poll string
-  let pollArgs = helperFunc.cleanPollString(fullArgs, "|");
-
-  if (pollArgs.length < 2) {
-    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["poll"]["help"]);
-    return;
-  }
+  let pollArgs = checkPollArgs;
 
   // Build poll message
   let question = pollArgs[0];
@@ -387,23 +382,22 @@ function pollCommand(receivedMsg, primaryCommand, fullArgs) {
   choices.forEach((choice, index) => {
     pollMsg = pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
   });
+  console.log("before:" + pollMsg);
+  question = helperFunc.restoreSpoilerTag(question);
+  pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
+  console.log("after:" + pollMsg);
   helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, constants.reactsAlphabet, choices.length, "poll");
 }
 
 function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
   console.log(String(fullArgs));
-  if (!fullArgs.includes("|")) {
-    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
+  let checkPollArgs = helperFunc.checkPollString(fullArgs);
+  if (typeof checkPollArgs === "string") {
+    let errMsg = checkPollArgs + " Try " + helpCommands["pollreacts"]["help"];
+    helperFunc.sendMsg(receivedMsg, errMsg);
     return;
   }
-
-  //Clean up poll string
-  let pollArgs = helperFunc.cleanPollString(fullArgs, "|");
-
-  if (pollArgs.length < 2) {
-    helperFunc.sendMsg(receivedMsg, "Format incorrect. Try " + helpCommands["pollreacts"]["help"]);
-    return;
-  }
+  let pollArgs = checkPollArgs;
 
   // Build poll message
   let question = pollArgs[0];
@@ -445,6 +439,8 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
   if (errMsg == "") {
     console.log(pollMsg + " " + question);
     console.log(customReacts);
+    question = helperFunc.restoreSpoilerTag(question);
+    pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
     helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, customReacts, customReacts.length, primaryCommand);
   } else {
     helperFunc.sendMsg(receivedMsg, errMsg);
