@@ -228,8 +228,8 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
   console.log("discordEmojiMatch:" + discordEmojiMatch);
   let emojiInfo = reactString.match(/<(a?):(\w+):(\d+)>/);
   console.log("emojiInfo:" + emojiInfo);
-  console.log("emojiInfo[3]:" + emojiInfo[3]);
   if (discordEmojiMatch != null && emojiInfo != null) {
+    console.log("emojiInfo[3]:" + emojiInfo[3]);
     let discordReact = client.emojis.cache.get(emojiInfo[3]);
     console.log("discordReact:" + discordReact);
     if (discordReact == null) {
