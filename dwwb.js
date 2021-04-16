@@ -159,6 +159,7 @@ function processCommand(receivedMsg) {
 }
 
 //#region Command functions
+//#region Help
 function helpCommand(receivedMsg, arguments) {
   if (arguments.length > 0) {
     var command = String(arguments[0]).toLowerCase();
@@ -180,6 +181,7 @@ function helpCommand(receivedMsg, arguments) {
       case "polltime":
       case "pt":
         command = "poll";
+        break;
       case "pr":
         command = "pollreacts";
         break;
@@ -209,7 +211,9 @@ function helpCommand(receivedMsg, arguments) {
     helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
 }
+//#endregion Help
 
+//#region Role Commands
 function voteCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
   roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, constants.voteMsgTitle);
 }
@@ -303,7 +307,9 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
 
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
+//#endregion Role Commands
 
+//#region Players Commands
 function votePlayersCommand(receivedMsg, arguments, primaryCommand) {
   playersCommand(receivedMsg, arguments, primaryCommand, constants.voteMsgTitle);
 }
@@ -356,7 +362,9 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
   }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
+//#endregion Players Commands
 
+//#region Other Commands
 function yesNoCommand(receivedMsg, fullArgs) {
   let pollMsg = "Yes or No?";
   let customMsg = fullArgs;
@@ -380,7 +388,9 @@ function randomNumberCommand(receivedMsg, arguments) {
     helperFunc.sendMsg(receivedMsg, "Please enter a positive whole number.");
   }
 }
+//#endregion Other Commands
 
+//#region Poll Commands
 function pollCommand(receivedMsg, fullArgs) {
   console.log(fullArgs);
   let checkPollArgs = helperFunc.checkPollString(fullArgs);
@@ -462,6 +472,8 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
     helperFunc.sendMsg(receivedMsg, errMsg);
   }
 }
+//#endregion Poll Commands
+
 //#endregion
 
 client.login();

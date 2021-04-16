@@ -54,11 +54,11 @@
         },
         "poll": {
           "help": "`!poll question|choice1|choice2|choice3`",
-          "desc": "Start a poll (Also: !polltime or !pt)"
+          "desc": "Start a poll (Also: `!polltime` or `!pt`)"
         },
         "pollreacts": {
           "help": "`!pollreacts question|choice1 = react1|choice2 = react2|choice3 = react3`",
-          "desc": "Start a poll with custom emoji reacts (Shortcut: !pr)"
+          "desc": "Start a poll with custom emoji reacts (Shortcut: `!pr`)"
         }
       },
       "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
