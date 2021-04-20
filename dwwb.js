@@ -7,8 +7,8 @@ const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
 const emojiRegex = require("emoji-regex/text.js");
-const mysql = require("mysql");
-const mysqlconfig = require("./mysqlconfig.js");
+const mysql = require("mysql2");
+const cleardbconfig = require("./db.config.js");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -483,7 +483,10 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
 
 //#region Database Commands
 function modsCommand(receivedMsg, arguments) {
-  const connection = mysql.createConnection(mysqlconfig);
+  console.log(cleardbconfig);
+  const connection = mysql.createConnection(cleardbconfig);
+  console.log("Connected to Database");
+
   let sql = `CALL GetMods(?)`;
 
   connection.query(sql, arguments[0], (error, results, fields) => {
@@ -495,7 +498,7 @@ function modsCommand(receivedMsg, arguments) {
     const resultsObject = results[0].map(objectifyRawPacket);
     console.log(resultsObject);
 
-    helperFunc.sendMsg(receivedMsg, resultsObject[0].user_id);
+    helperFunc.sendMsg(receivedMsg, resultsObject[0].discord_user_id);
   });
 
   connection.end();
