@@ -10,7 +10,8 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "emoji-regex": "^9.2.2"
+    "emoji-regex": "^9.2.2",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {},
   "scripts": {

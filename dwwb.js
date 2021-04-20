@@ -7,6 +7,8 @@ const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
 const emojiRegex = require("emoji-regex/text.js");
+const mysql = require("mysql");
+const mysqlconfig = require("./mysqlconfig.js");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -34,6 +36,7 @@ client.on("message", (receivedMsg) => {
   }
 });
 
+//#region Process Command
 function processCommand(receivedMsg) {
   let processString = receivedMsg.content;
   processString = processString.replace(/\s\s+/g, " "); // Remove extra spaces
@@ -152,11 +155,15 @@ function processCommand(receivedMsg) {
       case "pr":
         pollReactsCommand(receivedMsg, primaryCommand, fullArgsCleaned);
         break;
+      case "mods":
+        modsCommand(receivedMsg, arguments);
+        break;
       default:
         break;
     }
   }
 }
+//#endregion Process Command
 
 //#region Command functions
 //#region Help
@@ -474,6 +481,26 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
 }
 //#endregion Poll Commands
 
+//#region Database Commands
+function modsCommand(receivedMsg, arguments) {
+  const connection = mysql.createConnection(mysqlconfig);
+  let sql = `CALL GetMods(?)`;
+
+  connection.query(sql, arguments[0], (error, results, fields) => {
+    if (error) {
+      return console.error(error.message);
+    }
+    // Convert results to an object
+    const objectifyRawPacket = (row) => ({ ...Object.assign({}, row) });
+    const resultsObject = results[0].map(objectifyRawPacket);
+    console.log(resultsObject);
+
+    helperFunc.sendMsg(receivedMsg, resultsObject[0].user_id);
+  });
+
+  connection.end();
+}
+//#endregion Database Commands
 //#endregion
 
 client.login();
