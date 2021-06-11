@@ -6,6 +6,7 @@ const constants = require("./constants.json");
 const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
+const pgSus = constants.pgSus;
 const emojiRegex = require("emoji-regex/text.js");
 
 client.on("ready", () => {
@@ -151,6 +152,9 @@ function processCommand(receivedMsg) {
       case "pollreacts":
       case "pr":
         pollReactsCommand(receivedMsg, primaryCommand, fullArgsCleaned);
+        break;
+      case "pgsus":
+        pgSusCommand(receivedMsg);
         break;
       default:
         break;
@@ -387,6 +391,12 @@ function randomNumberCommand(receivedMsg, arguments) {
   } else {
     helperFunc.sendMsg(receivedMsg, "Please enter a positive whole number.");
   }
+}
+
+function pgSusCommand(receivedMsg) {
+  const pgBad = helperFunc.getRandomNumber(2) == 1 ? true : false;
+  const msg = pgBad ? pgSus[0] : pgSus[helperFunc.getRandomNumber(pgSus.length) - 1];
+  helperFunc.sendMsg(receivedMsg, msg);
 }
 //#endregion Other Commands
 
