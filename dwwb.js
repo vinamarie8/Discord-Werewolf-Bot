@@ -132,6 +132,10 @@ function processCommand(receivedMsg) {
       case "saddesttaz":
         helperFunc.sendImg(receivedMsg, "sadtaz", "");
         break;
+      case "thankstaz":
+      case "tytaz":
+        helperFunc.sendImg(receivedMsg, "thankyoutaz", "");
+        break;
       case "angrytaz":
       case "grumpytaz":
       case "eyerolltaz":
@@ -394,8 +398,7 @@ function randomNumberCommand(receivedMsg, arguments) {
 }
 
 function pgSusCommand(receivedMsg) {
-  const pgBad = helperFunc.getRandomNumber(2) == 1 ? true : false;
-  const msg = pgBad ? pgSus[0] : pgSus[helperFunc.getRandomNumber(pgSus.length) - 1];
+  const msg = pgSus[helperFunc.getRandomNumber(pgSus.length) - 1];
   helperFunc.sendMsg(receivedMsg, msg);
 }
 //#endregion Other Commands
