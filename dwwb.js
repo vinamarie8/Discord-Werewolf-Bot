@@ -160,6 +160,12 @@ function processCommand(receivedMsg) {
       case "pgsus":
         pgSusCommand(receivedMsg);
         break;
+      case "howlsend":
+          helperFunc.sendMsg(receivedMsg, "Did you mean bowels end?");
+          break;
+      case "wolfshold":
+        helperFunc.sendMsg(receivedMsg, "BEST HOLD");
+        break;
       default:
         break;
     }
