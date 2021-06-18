@@ -395,6 +395,10 @@ function tazCommand(receivedMsg, tazCommandArg) {
     case "partytaz":
       helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
       break;
+    case "questiontaz":
+    case "questionmarktaz":
+      helperFunc.sendImg(receivedMsg, "confusedtaz", "");
+      break;
     case "chickentaz":
     case "chickenlegtaz":
     case "turkeytaz":
