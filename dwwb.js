@@ -67,6 +67,11 @@ function processCommand(receivedMsg) {
       helperFunc.sendImg(receivedMsg, primaryCommand, "💯0% real");
     }
   } else {
+    let tazCommandArg = "";
+    if (String(primaryCommand).includes("taz")){
+      tazCommandArg = primaryCommand;
+      primaryCommand = "taz";
+    }
     switch (primaryCommand) {
       case "help":
         helpCommand(receivedMsg, arguments);
@@ -90,56 +95,12 @@ function processCommand(receivedMsg) {
       case "yn":
         yesNoCommand(receivedMsg, fullArgsCleaned);
         break;
+      case "taz":
+        tazCommand(receivedMsg, tazCommandArg);
+        break;
       case "my":
       case "if":
-      case "birthdaytaz":
-      case "byetaz":
-      case "confusedtaz":
-      case "congratstaz":
-      case "eatingtaz":
-      case "flowertaz":
-      case "happytaz":
-      case "hitaz":
-      case "loltaz":
-      case "missyoutaz":
-      case "omgtaz":
-      case "sadtaz":
-      case "sorrytaz":
-      case "thankyoutaz":
-      case "thumbsuptaz":
-      case "unamusedtaz":
         helperFunc.sendImg(receivedMsg, primaryCommand, "");
-        break;
-      case "celebrationtaz":
-      case "celebratetaz":
-      case "caketaz":
-      case "partytaz":
-        helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
-        break;
-      case "chickentaz":
-      case "chickenlegtaz":
-      case "turkeytaz":
-      case "turkeylegtaz":
-        helperFunc.sendImg(receivedMsg, "eatingtaz", "");
-        break;
-      case "flowerstaz":
-        helperFunc.sendImg(receivedMsg, "flowertaz", "");
-        break;
-      case "heartstaz":
-        helperFunc.sendImg(receivedMsg, "happytaz", "");
-        break;
-      case "crytaz":
-      case "saddesttaz":
-        helperFunc.sendImg(receivedMsg, "sadtaz", "");
-        break;
-      case "thankstaz":
-      case "tytaz":
-        helperFunc.sendImg(receivedMsg, "thankyoutaz", "");
-        break;
-      case "angrytaz":
-      case "grumpytaz":
-      case "eyerolltaz":
-        helperFunc.sendImg(receivedMsg, "unamusedtaz", "");
         break;
       case "idol":
         helperFunc.sendImg(receivedMsg, primaryCommand, "💯0% real");
@@ -406,6 +367,65 @@ function randomNumberCommand(receivedMsg, arguments) {
 function pgSusCommand(receivedMsg) {
   const msg = pgSus[helperFunc.getRandomNumber(pgSus.length) - 1];
   helperFunc.sendMsg(receivedMsg, msg);
+}
+
+function tazCommand(receivedMsg, tazCommandArg) {
+  switch (tazCommandArg){
+    case "birthdaytaz":
+    case "byetaz":
+    case "confusedtaz":
+    case "congratstaz":
+    case "eatingtaz":
+    case "flowertaz":
+    case "happytaz":
+    case "hitaz":
+    case "loltaz":
+    case "missyoutaz":
+    case "omgtaz":
+    case "sadtaz":
+    case "sorrytaz":
+    case "thankyoutaz":
+    case "thumbsuptaz":
+    case "unamusedtaz":
+      helperFunc.sendImg(receivedMsg, tazCommandArg, "");
+      break;
+    case "celebrationtaz":
+    case "celebratetaz":
+    case "caketaz":
+    case "partytaz":
+      helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
+      break;
+    case "chickentaz":
+    case "chickenlegtaz":
+    case "turkeytaz":
+    case "turkeylegtaz":
+      helperFunc.sendImg(receivedMsg, "eatingtaz", "");
+      break;
+    case "flowerstaz":
+      helperFunc.sendImg(receivedMsg, "flowertaz", "");
+      break;
+    case "hearttaz":
+    case "heartstaz":
+    case "lovetaz":
+      helperFunc.sendImg(receivedMsg, "happytaz", "");
+      break;
+    case "crytaz":
+    case "saddesttaz":
+      helperFunc.sendImg(receivedMsg, "sadtaz", "");
+      break;
+    case "thankstaz":
+    case "tytaz":
+      helperFunc.sendImg(receivedMsg, "thankyoutaz", "");
+      break;
+    case "angrytaz":
+    case "grumpytaz":
+    case "eyerolltaz":
+      helperFunc.sendImg(receivedMsg, "unamusedtaz", "");
+      break;
+    case "oktaz":
+      helperFunc.sendImg(receivedMsg, "thumbsuptaz", "");
+      break;
+  }
 }
 //#endregion Other Commands
 
