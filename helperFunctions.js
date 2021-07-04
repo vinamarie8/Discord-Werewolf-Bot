@@ -11,7 +11,7 @@ function sendImg(receivedMsg, imageName, textMsg) {
   let filePath = "img/" + imageName + ".png";
   receivedMsg.channel.send(textMsg, {
     files: [filePath],
-  });
+  }).then(console.log);
 }
 
 function getRandomNumber(maxNumber) {
@@ -181,6 +181,7 @@ function getFilteredMembersArray(membersRemove, membersArray) {
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
   title = getTrimTitle(title);
   const embed = new Discord.MessageEmbed().setTitle(title).setColor(constants.embedColor).setDescription(sendMsg);
+  console.log("this is the embed", embed);
   return receivedMsg.channel.send(embed);
 }
 
@@ -191,6 +192,7 @@ function sendMsgMemberEmbed(receivedMsg, title, sendMsg, member) {
     .setColor(constants.embedColor)
     .setDescription(sendMsg)
     .setImage(member.user.avatarURL());
+  console.log("here is the embed", embed);
   return receivedMsg.channel.send(embed);
 }
 
@@ -203,7 +205,7 @@ function getTrimTitle(title) {
 }
 
 function sendMsg(receivedMsg, sendMsg) {
-  receivedMsg.channel.send(sendMsg);
+  receivedMsg.channel.send(sendMsg).then(console.log);
 }
 
 function cleanPollString(fullArgs, delimiter) {

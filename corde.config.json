@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/corde/schema/corde.schema.json",
+  "botPrefix": "!",
+  "botTestId": "815651754094886944",
+  "channelId": "855900573546053642",
+  "cordeBotToken": "ODU1ODk5ODk3OTgyMjIyMzQ3.YM5M5Q.VEklNSLQgJ199DdXjT-nlHq5SYU",
+  "guildId": "703414721012826143",
+  "testMatches": ["./test/**"],
+  "botToken": "ODE0MzY2MTE1MzkxNDcxNjE2.YDczjA.0rgbiW2nRwwyaVMCwxyUnmzotsU",
+  "timeOut": 10000
+}

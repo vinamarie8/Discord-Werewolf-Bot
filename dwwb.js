@@ -519,4 +519,11 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
 
 //#endregion
 
-client.login();
+function loginBot() {
+  client.login();
+}
+
+loginBot();
+
+exports.client = client;
+exports.loginBot = loginBot;
