@@ -35,7 +35,8 @@
         "\"If you pass me a blue I will play it.\"",
         "\"I am 1000% good!\"",
         "GTL!",
-        "\"You're not supposed to speak after the timer ends actually. Time is up!!!\" - PG as a wolf"
+        "\"You're not supposed to speak after the timer ends actually. Time is up!!!\" - PG as a wolf",
+        "\"Shall we put the Masons in?\""
       ],
       "helpCommands": {
         "vote": {
@@ -74,7 +75,7 @@
       "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
       "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`",
       "embedColor": "#c09edb",
-      "maxImageNumber": 6,
+      "maxImageNumber": 7,
       "voteMsgTitle": "It's time to vote!",
       "wheelMsgTitle": "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡",
       "onlyBotsMentioned": "No humans were mentioned, only bots.",
