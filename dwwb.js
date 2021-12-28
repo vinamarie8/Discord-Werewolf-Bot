@@ -373,6 +373,7 @@ function tazCommand(receivedMsg, tazCommandArg) {
   switch (tazCommandArg){
     case "birthdaytaz":
     case "byetaz":
+    case "christmastaz":
     case "confusedtaz":
     case "congratstaz":
     case "eatingtaz":
@@ -394,6 +395,11 @@ function tazCommand(receivedMsg, tazCommandArg) {
     case "caketaz":
     case "partytaz":
       helperFunc.sendImg(receivedMsg, "birthdaytaz", "");
+      break;
+    case "xmastaz":
+    case "santataz":
+    case "holidaytaz":
+      helperFunc.sendImg(receivedMsg, "christmastaz", "");
       break;
     case "questiontaz":
     case "questionmarktaz":
