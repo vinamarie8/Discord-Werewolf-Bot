@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const constants = require("./constants.json");
 const emojiRegex = require("emoji-regex/text.js");
 const { Util } = require("discord.js");
+var moment = require("moment-timezone");
 
 function sendImg(receivedMsg, imageName, textMsg) {
   if (imageName == "idol") {
@@ -51,28 +52,57 @@ function getArgsCleaned(argsToClean, receivedMsg) {
   return argsToClean;
 }
 
-function getCustomMsgMembersRemove(fullArgs, mention, arguments, membersRemove, msgTitle, receivedMsg) {
+function getCustomMsgMembersRemove(
+  fullArgs,
+  mention,
+  arguments,
+  membersRemove,
+  msgTitle,
+  receivedMsg
+) {
   let membersRemoveCount = membersRemove.length;
   let msgIndex = membersRemoveCount + 1;
   console.log("membersRemoveCount: " + membersRemoveCount);
   if (membersRemoveCount > 0 && !(arguments[msgIndex] == undefined)) {
-    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex, receivedMsg);
+    msgTitle = getCustomMsgFromArguments(
+      msgTitle,
+      arguments,
+      msgIndex,
+      receivedMsg
+    );
   } else if (!(membersRemoveCount > 0)) {
     msgTitle = getCustomMsgFromArguments(msgTitle, arguments, 1, receivedMsg);
   }
   return msgTitle;
 }
 
-function getCustomMsgPlayers(arguments, membersMentioned, msgTitle, receivedMsg) {
+function getCustomMsgPlayers(
+  arguments,
+  membersMentioned,
+  msgTitle,
+  receivedMsg
+) {
   let membersMentionedCount = membersMentioned.length;
   let msgIndex = membersMentionedCount;
   if (membersMentionedCount > 0 && !(arguments[msgIndex] == undefined)) {
-    msgTitle = getCustomMsgFromArguments(msgTitle, arguments, msgIndex, receivedMsg);
+    msgTitle = getCustomMsgFromArguments(
+      msgTitle,
+      arguments,
+      msgIndex,
+      receivedMsg
+    );
   }
   return msgTitle;
 }
 
-async function sendMsgWithReacts(receivedMsg, sendMsg, sendMsgTitle, reacts, reactCount, primaryCommand) {
+async function sendMsgWithReacts(
+  receivedMsg,
+  sendMsg,
+  sendMsgTitle,
+  reacts,
+  reactCount,
+  primaryCommand
+) {
   const msg = await sendMsgEmbed(receivedMsg, sendMsgTitle, sendMsg);
   // Discord limit of 20 reacts/msg
   let reactLimit = 20;
@@ -99,7 +129,9 @@ function getRoleFromMention(mention, receivedMsg) {
     return receivedMsg.guild.roles.cache.get(mention);
   }
   if (mention == "@everyone") {
-    return receivedMsg.guild.roles.cache.get(receivedMsg.guild.roles.everyone.id);
+    return receivedMsg.guild.roles.cache.get(
+      receivedMsg.guild.roles.everyone.id
+    );
   }
 }
 
@@ -159,7 +191,8 @@ function checkMembersArrayForError(membersArray) {
         errMsg = errArg + " is not part of this server.";
         break;
       default:
-        errMsg = "Oops, sorry! There was an error. Check the formatting and try again.";
+        errMsg =
+          "Oops, sorry! There was an error. Check the formatting and try again.";
         break;
     }
   }
@@ -170,7 +203,9 @@ function getFilteredMembersArray(membersRemove, membersArray) {
   let membersKept = [];
   let membersRemoveCount = membersRemove.length;
   if (membersRemoveCount > 0) {
-    membersKept = membersArray.filter((member) => !membersRemove.includes(member));
+    membersKept = membersArray.filter(
+      (member) => !membersRemove.includes(member)
+    );
   } else {
     membersKept = membersArray;
   }
@@ -180,7 +215,10 @@ function getFilteredMembersArray(membersRemove, membersArray) {
 
 function sendMsgEmbed(receivedMsg, title, sendMsg) {
   title = getTrimTitle(title);
-  const embed = new Discord.MessageEmbed().setTitle(title).setColor(constants.embedColor).setDescription(sendMsg);
+  const embed = new Discord.MessageEmbed()
+    .setTitle(title)
+    .setColor(constants.embedColor)
+    .setDescription(sendMsg);
   return receivedMsg.channel.send(embed);
 }
 
@@ -233,7 +271,11 @@ function checkReact(client, reactString, customReacts, choiceMsg) {
     let discordReact = client.emojis.cache.get(emojiInfo[3]);
     console.log("discordReact:" + discordReact);
     if (discordReact == null) {
-      return "Sorry, DWWVD/Z Bot does not have access to the emoji '" + reactString + "'";
+      return (
+        "Sorry, DWWVD/Z Bot does not have access to the emoji '" +
+        reactString +
+        "'"
+      );
     } else {
       return discordReact.toString();
     }
@@ -281,6 +323,55 @@ function restoreSpoilerTag(pollString) {
   return pollString.split("@#$%^spoiler@#$%^").join("||");
 }
 
+function getUtcTimeString(fullArgs, timeZoneName) {
+  const input = fullArgs.toLowerCase();
+  let time;
+  let amPm;
+  if (input.includes("am")) {
+    time = fullArgs.split("am")[0].trim();
+    amPm = "AM";
+  } else if (input.includes("pm")) {
+    time = fullArgs.split("pm")[0].trim();
+    amPm = "PM";
+  } else {
+    helperFunc.sendMsg(receivedMsg, "Incorrect time format. Use hh:mm am/pm");
+    return;
+  }
+
+  const hr = time.split(":")[0];
+  const min = time.split(":")[1];
+  const timeString =
+    (hr.length === 1 ? `0${hr}` : hr) + ":" + (min ? min : "00");
+
+  let today = new Date().toISOString().slice(0, 10);
+  const inputDateTime = `${today} ${timeString}:00 ${amPm}`;
+  const dateTimeFormat = "YYYY-MM-DD hh:mm:ss A";
+
+  const utcTime = moment.tz(inputDateTime, dateTimeFormat, timeZoneName);
+  const utcTimeString = utcTime.toISOString();
+
+  return utcTimeString;
+}
+
+function convertToTimeString(utcTimeString, timeZoneName, timeZoneDesc) {
+  const estTime = moment.tz(utcTimeString, "America/New_York");
+  const time = moment.tz(utcTimeString, timeZoneName);
+  const dateDiff = time.format("DD") - estTime.format("DD");
+  let dayString = " ";
+  switch (dateDiff) {
+    case 1:
+      dayString = " (Next Day) ";
+      break;
+    case -1:
+      dayString = " (Previous Day) ";
+      break;
+    default:
+      break;
+  }
+
+  return `${time.format("hh:mm A")}${dayString}${timeZoneDesc}\n`;
+}
+
 module.exports = {
   sendImg,
   getRandomNumber,
@@ -300,4 +391,6 @@ module.exports = {
   checkReact,
   checkPollString,
   restoreSpoilerTag,
+  getUtcTimeString,
+  convertToTimeString,
 };

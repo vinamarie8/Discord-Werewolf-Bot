@@ -8,6 +8,7 @@ const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
 const pgSus = constants.pgSus;
 const emojiRegex = require("emoji-regex/text.js");
+var moment = require("moment-timezone");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -30,7 +31,10 @@ client.on("message", (receivedMsg) => {
       processCommand(receivedMsg);
     } catch (error) {
       console.error(error);
-      helperFunc.sendMsg(receivedMsg, "Oops, sorry! There was an error. Please try again.");
+      helperFunc.sendMsg(
+        receivedMsg,
+        "Oops, sorry! There was an error. Please try again."
+      );
     }
   }
 });
@@ -68,13 +72,20 @@ function processCommand(receivedMsg) {
     }
   } else {
     let tazCommandArg = "";
-    if (String(primaryCommand).includes("taz")){
+    if (String(primaryCommand).includes("taz")) {
       tazCommandArg = primaryCommand;
       primaryCommand = "taz";
     }
     switch (primaryCommand) {
       case "help":
         helpCommand(receivedMsg, arguments);
+        break;
+      case "timezones":
+        timeCommand(receivedMsg, arguments, fullArgs);
+        break;
+      case "mytimezone":
+      case "mytz":
+        myTimezoneCommand(receivedMsg, arguments, fullArgs);
         break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
@@ -122,8 +133,8 @@ function processCommand(receivedMsg) {
         pgSusCommand(receivedMsg);
         break;
       case "howlsend":
-          helperFunc.sendMsg(receivedMsg, "Did you mean bowels end?");
-          break;
+        helperFunc.sendMsg(receivedMsg, "Did you mean bowels end?");
+        break;
       case "wolfshold":
         helperFunc.sendMsg(receivedMsg, "BEST HOLD");
         break;
@@ -164,9 +175,14 @@ function helpCommand(receivedMsg, arguments) {
 
     // Help for individual command
     if (helpCommands[command]) {
-      helpMsg = helpMsg + helpCommands[command]["desc"] + newLine + helpCommands[command]["help"];
+      helpMsg =
+        helpMsg +
+        helpCommands[command]["desc"] +
+        newLine +
+        helpCommands[command]["help"];
     } else {
-      helpMsg = "`" + command + "` not recognized. Try " + constants.availableCommands;
+      helpMsg =
+        "`" + command + "` not recognized. Try " + constants.availableCommands;
       commandFound = false;
       helperFunc.sendMsg(receivedMsg, helpMsg);
     }
@@ -177,11 +193,14 @@ function helpCommand(receivedMsg, arguments) {
   } else {
     // Full help message
     let fullHelpMsg = constants.helpInfo + newLineDouble;
-    for (var i in helpCommands) {
-      if (helpCommands[i] instanceof Object) {
-        fullHelpMsg = fullHelpMsg + helpCommands[i]["desc"] + newLine + helpCommands[i]["help"] + newLineDouble;
-      }
-    }
+    fullHelpMsg +=
+      "Type `!help command` to get info on a command." +
+      newLine +
+      "List of commands:" +
+      newLine;
+    Object.keys(helpCommands).forEach((command) => {
+      fullHelpMsg += "`" + command + "`,";
+    });
 
     helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
@@ -190,16 +209,37 @@ function helpCommand(receivedMsg, arguments) {
 
 //#region Role Commands
 function voteCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
-  roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, constants.voteMsgTitle);
+  roleCommand(
+    receivedMsg,
+    arguments,
+    primaryCommand,
+    fullArgs,
+    constants.voteMsgTitle
+  );
 }
 
 function wheelCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
-  roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, constants.wheelMsgTitle);
+  roleCommand(
+    receivedMsg,
+    arguments,
+    primaryCommand,
+    fullArgs,
+    constants.wheelMsgTitle
+  );
 }
 
-function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle) {
+function roleCommand(
+  receivedMsg,
+  arguments,
+  primaryCommand,
+  fullArgs,
+  msgTitle
+) {
   const mention = arguments[0];
-  const roleMentioned = helperFunc.getRoleFromMention(String(mention), receivedMsg);
+  const roleMentioned = helperFunc.getRoleFromMention(
+    String(mention),
+    receivedMsg
+  );
   let errMsg = "";
 
   console.log(receivedMsg);
@@ -212,7 +252,11 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
       if (members.size > 0) {
         let membersArray = members.array();
         // Remove users from members array
-        let membersRemove = helperFunc.getMembersMentionedArray(receivedMsg, arguments, 1);
+        let membersRemove = helperFunc.getMembersMentionedArray(
+          receivedMsg,
+          arguments,
+          1
+        );
 
         console.log("members " + membersRemove.length);
         errMsg = helperFunc.checkMembersArrayForError(membersRemove);
@@ -235,7 +279,10 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
         console.log("msg: " + msgTitle);
         console.log("membersArray.length: " + membersArray.length);
         // Filter array
-        let membersKept = helperFunc.getFilteredMembersArray(membersRemove, membersArray);
+        let membersKept = helperFunc.getFilteredMembersArray(
+          membersRemove,
+          membersArray
+        );
 
         if (!(membersKept.length > 0)) {
           errMsg = `Oops! The ${primaryCommand} is empty now.`;
@@ -245,17 +292,31 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
 
         switch (primaryCommand) {
           case "wheel":
-            let memberIndex = helperFunc.getRandomNumber(membersKept.length) - 1;
+            let memberIndex =
+              helperFunc.getRandomNumber(membersKept.length) - 1;
             let chosenMember = membersKept[memberIndex];
-            let msg = "**" + chosenMember.displayName + "** has been chosen by the wheel!";
-            helperFunc.sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
+            let msg =
+              "**" +
+              chosenMember.displayName +
+              "** has been chosen by the wheel!";
+            helperFunc.sendMsgMemberEmbed(
+              receivedMsg,
+              msgTitle,
+              msg,
+              chosenMember
+            );
             break;
           case "vote":
             var memberCount = 0;
             var voteMsg = "";
 
             membersKept.forEach((member) => {
-              voteMsg = voteMsg + constants.reactsAlphabet[memberCount] + " " + member.displayName + "\n\n";
+              voteMsg =
+                voteMsg +
+                constants.reactsAlphabet[memberCount] +
+                " " +
+                member.displayName +
+                "\n\n";
               memberCount++;
             });
             if (memberCount > 0) {
@@ -286,16 +347,30 @@ function roleCommand(receivedMsg, arguments, primaryCommand, fullArgs, msgTitle)
 
 //#region Players Commands
 function votePlayersCommand(receivedMsg, arguments, primaryCommand) {
-  playersCommand(receivedMsg, arguments, primaryCommand, constants.voteMsgTitle);
+  playersCommand(
+    receivedMsg,
+    arguments,
+    primaryCommand,
+    constants.voteMsgTitle
+  );
 }
 
 function wheelPlayersCommand(receivedMsg, arguments, primaryCommand) {
-  playersCommand(receivedMsg, arguments, primaryCommand, constants.wheelMsgTitle);
+  playersCommand(
+    receivedMsg,
+    arguments,
+    primaryCommand,
+    constants.wheelMsgTitle
+  );
 }
 
 function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
   let errMsg = "";
-  let membersMentioned = helperFunc.getMembersMentionedArray(receivedMsg, arguments, 0);
+  let membersMentioned = helperFunc.getMembersMentionedArray(
+    receivedMsg,
+    arguments,
+    0
+  );
 
   errMsg = helperFunc.checkMembersArrayForError(membersMentioned);
   if (errMsg != "") {
@@ -303,29 +378,57 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
     return;
   }
 
-  msgTitle = helperFunc.getCustomMsgPlayers(arguments, membersMentioned, msgTitle, receivedMsg);
+  msgTitle = helperFunc.getCustomMsgPlayers(
+    arguments,
+    membersMentioned,
+    msgTitle,
+    receivedMsg
+  );
 
   if (membersMentioned.length > 0) {
-    let validMembersMentioned = membersMentioned.filter((member) => !member.user.bot);
+    let validMembersMentioned = membersMentioned.filter(
+      (member) => !member.user.bot
+    );
 
     if (validMembersMentioned.length > 0) {
       switch (primaryCommand) {
         case "wheelplayers":
-          let memberIndex = helperFunc.getRandomNumber(validMembersMentioned.length) - 1;
+          let memberIndex =
+            helperFunc.getRandomNumber(validMembersMentioned.length) - 1;
           let chosenMember = validMembersMentioned[memberIndex];
-          let msg = "**" + chosenMember.displayName + "** has been chosen by the wheel!";
-          helperFunc.sendMsgMemberEmbed(receivedMsg, msgTitle, msg, chosenMember);
+          let msg =
+            "**" +
+            chosenMember.displayName +
+            "** has been chosen by the wheel!";
+          helperFunc.sendMsgMemberEmbed(
+            receivedMsg,
+            msgTitle,
+            msg,
+            chosenMember
+          );
           break;
         case "voteplayers":
           var memberCount = 0;
           var voteMsg = "";
 
           validMembersMentioned.forEach((member) => {
-            voteMsg = voteMsg + constants.reactsAlphabet[memberCount] + " " + member.displayName + newLineDouble;
+            voteMsg =
+              voteMsg +
+              constants.reactsAlphabet[memberCount] +
+              " " +
+              member.displayName +
+              newLineDouble;
             memberCount++;
           });
           if (memberCount > 0) {
-            helperFunc.sendMsgWithReacts(receivedMsg, voteMsg, msgTitle, constants.reactsAlphabet, memberCount, "vote");
+            helperFunc.sendMsgWithReacts(
+              receivedMsg,
+              voteMsg,
+              msgTitle,
+              constants.reactsAlphabet,
+              memberCount,
+              "vote"
+            );
           }
           break;
       }
@@ -333,13 +436,50 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
       errMsg = constants.onlyBotsMentioned;
     }
   } else {
-    errMsg = constants.noMembersMentioned + " Try " + helpCommands[primaryCommand]["help"];
+    errMsg =
+      constants.noMembersMentioned +
+      " Try " +
+      helpCommands[primaryCommand]["help"];
   }
   if (errMsg != "") helperFunc.sendMsg(receivedMsg, errMsg);
 }
 //#endregion Players Commands
 
 //#region Other Commands
+function myTimezoneCommand(receivedMsg, args, fullArgs) {
+  const utcTimeString = helperFunc.getUtcTimeString(
+    fullArgs,
+    "America/New_York"
+  );
+  const msgMoment = moment(receivedMsg.createdTimestamp);
+  const tzName = moment.tz.names().find((timezoneName) => {
+    return msgMoment.format("ZZ") === moment.tz(timezoneName).format("ZZ");
+  });
+
+  helperFunc.sendMsg(
+    receivedMsg,
+    helperFunc.convertToTimeString(utcTimeString, tzName, "(beta)")
+  );
+}
+
+function timeCommand(receivedMsg, args, fullArgs) {
+  const utcTimeString = helperFunc.getUtcTimeString(
+    fullArgs,
+    "America/New_York"
+  );
+
+  let returnMsg = "";
+  constants.timezones.forEach((tz) => {
+    returnMsg += helperFunc.convertToTimeString(
+      utcTimeString,
+      tz.timeZoneName,
+      tz.timeZoneDesc
+    );
+  });
+
+  helperFunc.sendMsg(receivedMsg, returnMsg);
+}
+
 function yesNoCommand(receivedMsg, fullArgs) {
   let pollMsg = "Yes or No?";
   let customMsg = fullArgs;
@@ -370,7 +510,7 @@ function pgSusCommand(receivedMsg) {
 }
 
 function tazCommand(receivedMsg, tazCommandArg) {
-  switch (tazCommandArg){
+  switch (tazCommandArg) {
     case "birthdaytaz":
     case "byetaz":
     case "christmastaz":
@@ -455,13 +595,21 @@ function pollCommand(receivedMsg, fullArgs) {
   let choices = pollArgs.slice(1);
   let pollMsg = "";
   choices.forEach((choice, index) => {
-    pollMsg = pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
+    pollMsg =
+      pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
   });
   console.log("before:" + pollMsg);
   question = helperFunc.restoreSpoilerTag(question);
   pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
   console.log("after:" + pollMsg);
-  helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, constants.reactsAlphabet, choices.length, "poll");
+  helperFunc.sendMsgWithReacts(
+    receivedMsg,
+    pollMsg,
+    question,
+    constants.reactsAlphabet,
+    choices.length,
+    "poll"
+  );
 }
 
 function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
@@ -487,16 +635,24 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
     console.log(choiceArgs.length);
     if (choiceArgs.length != 2) {
       console.log(errMsg);
-      errMsg = "Sorry, one '=' is required per choice. Try " + helpCommands["pollreacts"]["help"];
+      errMsg =
+        "Sorry, one '=' is required per choice. Try " +
+        helpCommands["pollreacts"]["help"];
       return false;
     }
 
     let choiceMsg = choiceArgs[0];
     let choiceReact = choiceArgs[1];
     // Check if react is valid
-    checkReact = helperFunc.checkReact(client, choiceReact, customReacts, choiceMsg);
+    checkReact = helperFunc.checkReact(
+      client,
+      choiceReact,
+      customReacts,
+      choiceMsg
+    );
     let strReturned =
-      typeof checkReact === "string" && Object.prototype.toString.call(checkReact) === "[object String]";
+      typeof checkReact === "string" &&
+      Object.prototype.toString.call(checkReact) === "[object String]";
     if (strReturned && checkReact != "" && checkReact.startsWith("Sorry")) {
       errMsg = checkReact;
       return false;
@@ -516,7 +672,14 @@ function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
     console.log(customReacts);
     question = helperFunc.restoreSpoilerTag(question);
     pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
-    helperFunc.sendMsgWithReacts(receivedMsg, pollMsg, question, customReacts, customReacts.length, primaryCommand);
+    helperFunc.sendMsgWithReacts(
+      receivedMsg,
+      pollMsg,
+      question,
+      customReacts,
+      customReacts.length,
+      primaryCommand
+    );
   } else {
     helperFunc.sendMsg(receivedMsg, errMsg);
   }

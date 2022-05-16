@@ -10,9 +10,9 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "emoji-regex": "^9.2.2"
+    "emoji-regex": "^9.2.2",
+    "moment-timezone": "^0.5.34"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dwwb.js"

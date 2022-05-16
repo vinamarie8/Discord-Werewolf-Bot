@@ -1,83 +1,98 @@
 {
-    "reactsAlphabet":[
-        "🇦",
-        "🇧",
-        "🇨",
-        "🇩",
-        "🇪",
-        "🇫",
-        "🇬",
-        "🇭",
-        "🇮",
-        "🇯",
-        "🇰",
-        "🇱",
-        "🇲",
-        "🇳",
-        "🇴",
-        "🇵",
-        "🇶",
-        "🇷",
-        "🇸",
-        "🇹",
-        "🇺",
-        "🇻",
-        "🇼",
-        "🇽",
-        "🇾",
-        "🇿"
-      ],
-      "pgSus": [
-        "PG BAD PG WOLF PG SUS", 
-        "PG left her role on the screen and PG bad confirmed.",
-        "\"I swear I'm the villager!\"",
-        "\"Don't listen to what the chat says!\"",
-        "\"If you pass me a blue I will play it.\"",
-        "\"I am 1000% good!\"",
-        "GTL!",
-        "\"You're not supposed to speak after the timer ends actually. Time is up!!!\" - PG as a wolf",
-        "\"Shall we put the Masons in?\""
-      ],
-      "helpCommands": {
-        "vote": {
-          "help": "`!vote @role_name @optional_player1 @optional_player2 optional_message`",
-          "desc": "Start voting poll for all members with mentioned role. Players mentioned will be removed from the vote."  
-        },
-        "voteplayers": {
-          "help": "`!voteplayers @player1 @player2 optional_message`",
-          "desc": "Start voting poll for players mentioned. (Shortcut: `!vp`)"  
-        },
-        "wheel": {
-          "help": "`!wheel @role_name @optional_player1 @optional_player2 optional_message`",
-          "desc": "Choose a random player of mentioned role. Players mentioned will be removed from the wheel."
-        },
-        "wheelplayers": {
-          "help": "`!wheelplayers @player1 @player2 optional_message`",
-          "desc": "Choose a random player from players mentioned. (Shortcut: `!wp`)"
-        },
-        "yn": {
-          "help": "`!yn yes_or_no_question`",
-          "desc": "Start a Yes/No poll"
-        },
-        "random": {
-          "help": "`!random number` or `!number number`",
-          "desc": "Get random number between 1 and number specified"
-        },
-        "poll": {
-          "help": "`!poll question|choice1|choice2|choice3`",
-          "desc": "Start a poll (Also: `!polltime` or `!pt`)"
-        },
-        "pollreacts": {
-          "help": "`!pollreacts question|choice1 = react1|choice2 = react2|choice3 = react3`",
-          "desc": "Start a poll with custom emoji reacts (Shortcut: `!pr`)"
-        }
-      },
-      "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
-      "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`",
-      "embedColor": "#c09edb",
-      "maxImageNumber": 7,
-      "voteMsgTitle": "It's time to vote!",
-      "wheelMsgTitle": "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡",
-      "onlyBotsMentioned": "No humans were mentioned, only bots.",
-      "noMembersMentioned": "No members were mentioned."
+  "timezones": [
+    { "timeZoneName": "America/Los_Angeles", "timeZoneDesc": "West Coast" },
+    { "timeZoneName": "America/Chicago", "timeZoneDesc": "Central" },
+    { "timeZoneName": "America/New_York", "timeZoneDesc": "East Coast" },
+    { "timeZoneName": "Europe/London", "timeZoneDesc": "UK" },
+    { "timeZoneName": "Asia/Seoul", "timeZoneDesc": "Seoul" }
+  ],
+  "reactsAlphabet": [
+    "🇦",
+    "🇧",
+    "🇨",
+    "🇩",
+    "🇪",
+    "🇫",
+    "🇬",
+    "🇭",
+    "🇮",
+    "🇯",
+    "🇰",
+    "🇱",
+    "🇲",
+    "🇳",
+    "🇴",
+    "🇵",
+    "🇶",
+    "🇷",
+    "🇸",
+    "🇹",
+    "🇺",
+    "🇻",
+    "🇼",
+    "🇽",
+    "🇾",
+    "🇿"
+  ],
+  "pgSus": [
+    "PG BAD PG WOLF PG SUS",
+    "PG left her role on the screen and PG bad confirmed.",
+    "\"I swear I'm the villager!\"",
+    "\"Don't listen to what the chat says!\"",
+    "\"If you pass me a blue I will play it.\"",
+    "\"I am 1000% good!\"",
+    "GTL!",
+    "\"You're not supposed to speak after the timer ends actually. Time is up!!!\" - PG as a wolf",
+    "\"Shall we put the Masons in?\""
+  ],
+  "helpCommands": {
+    "vote": {
+      "help": "`!vote @role_name @optional_player1 @optional_player2 optional_message`",
+      "desc": "Start voting poll for all members with mentioned role. Players mentioned will be removed from the vote."
+    },
+    "voteplayers": {
+      "help": "`!voteplayers @player1 @player2 optional_message`",
+      "desc": "Start voting poll for players mentioned. (Shortcut: `!vp`)"
+    },
+    "wheel": {
+      "help": "`!wheel @role_name @optional_player1 @optional_player2 optional_message`",
+      "desc": "Choose a random player of mentioned role. Players mentioned will be removed from the wheel."
+    },
+    "wheelplayers": {
+      "help": "`!wheelplayers @player1 @player2 optional_message`",
+      "desc": "Choose a random player from players mentioned. (Shortcut: `!wp`)"
+    },
+    "yn": {
+      "help": "`!yn yes_or_no_question`",
+      "desc": "Start a Yes/No poll"
+    },
+    "random": {
+      "help": "`!random number` or `!number number`",
+      "desc": "Get random number between 1 and number specified"
+    },
+    "poll": {
+      "help": "`!poll question|choice1|choice2|choice3`",
+      "desc": "Start a poll (Also: `!polltime` or `!pt`)"
+    },
+    "pollreacts": {
+      "help": "`!pollreacts question|choice1 = react1|choice2 = react2|choice3 = react3`",
+      "desc": "Start a poll with custom emoji reacts (Shortcut: `!pr`)"
+    },
+    "timezones": {
+      "help": "`!timezones time_in_eastern`",
+      "desc": "Get a list of times converted from Eastern time"
+    },
+    "mytimezone": {
+      "help": "`!mytimezone time_in_eastern` or `!mytz time_in_eastern`",
+      "desc": "Get your time converted from Eastern time"
+    }
+  },
+  "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
+  "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`",
+  "embedColor": "#c09edb",
+  "maxImageNumber": 7,
+  "voteMsgTitle": "It's time to vote!",
+  "wheelMsgTitle": "🎡🎡🎡 WHEEL WHEEL WHEEL 🎡🎡🎡",
+  "onlyBotsMentioned": "No humans were mentioned, only bots.",
+  "noMembersMentioned": "No members were mentioned."
 }
