@@ -193,16 +193,14 @@ function helpCommand(receivedMsg, arguments) {
   } else {
     // Full help message
     let fullHelpMsg = constants.helpInfo + newLineDouble;
-    for (var i in helpCommands) {
-      if (helpCommands[i] instanceof Object) {
-        fullHelpMsg =
-          fullHelpMsg +
-          helpCommands[i]["desc"] +
-          newLine +
-          helpCommands[i]["help"] +
-          newLineDouble;
-      }
-    }
+    fullHelpMsg +=
+      "Type `!help command` to get info on a command." +
+      newLine +
+      "List of commands:" +
+      newLine;
+    Object.keys(helpCommands).forEach((command) => {
+      fullHelpMsg += "`" + command + "`,";
+    });
 
     helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
   }
