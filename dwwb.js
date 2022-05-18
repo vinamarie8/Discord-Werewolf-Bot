@@ -8,7 +8,6 @@ const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
 const pgSus = constants.pgSus;
 const emojiRegex = require("emoji-regex/text.js");
-var moment = require("moment-timezone");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -80,12 +79,10 @@ function processCommand(receivedMsg) {
       case "help":
         helpCommand(receivedMsg, arguments);
         break;
-      case "timezones":
-        timeCommand(receivedMsg, arguments, fullArgs);
-        break;
-      case "mytimezone":
-      case "mytz":
-        myTimezoneCommand(receivedMsg, arguments, fullArgs);
+      case "convertet":
+      case "converteastern":
+      case "et":
+        convertEtCommand(receivedMsg, fullArgs);
         break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
@@ -155,6 +152,9 @@ function helpCommand(receivedMsg, arguments) {
 
     // Shourcuts/alternate commands
     switch (command) {
+      case "et":
+        command = "convertet";
+        break;
       case "number":
         command = "random";
         break;
@@ -446,38 +446,20 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
 //#endregion Players Commands
 
 //#region Other Commands
-function myTimezoneCommand(receivedMsg, args, fullArgs) {
-  const utcTimeString = helperFunc.getUtcTimeString(
-    fullArgs,
-    "America/New_York"
-  );
-  const msgMoment = moment(receivedMsg.createdTimestamp);
-  const tzName = moment.tz.names().find((timezoneName) => {
-    return msgMoment.format("ZZ") === moment.tz(timezoneName).format("ZZ");
-  });
-
-  helperFunc.sendMsg(
+function convertEtCommand(receivedMsg, fullArgs) {
+  const utcTime = helperFunc.getUtcTime(
     receivedMsg,
-    helperFunc.convertToTimeString(utcTimeString, tzName, "(beta)")
-  );
-}
-
-function timeCommand(receivedMsg, args, fullArgs) {
-  const utcTimeString = helperFunc.getUtcTimeString(
     fullArgs,
     "America/New_York"
   );
 
-  let returnMsg = "";
-  constants.timezones.forEach((tz) => {
-    returnMsg += helperFunc.convertToTimeString(
-      utcTimeString,
-      tz.timeZoneName,
-      tz.timeZoneDesc
-    );
-  });
-
-  helperFunc.sendMsg(receivedMsg, returnMsg);
+  if (utcTime) {
+    const timeStamp = utcTime.format("X");
+    const returnMsg = timeStamp.toLowerCase().includes("invalid")
+      ? "Invalid time"
+      : `<t:${utcTime.format("X")}:t>`;
+    helperFunc.sendMsg(receivedMsg, returnMsg);
+  }
 }
 
 function yesNoCommand(receivedMsg, fullArgs) {

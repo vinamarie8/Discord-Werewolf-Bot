@@ -323,7 +323,7 @@ function restoreSpoilerTag(pollString) {
   return pollString.split("@#$%^spoiler@#$%^").join("||");
 }
 
-function getUtcTimeString(fullArgs, timeZoneName) {
+function getUtcTime(receivedMsg, fullArgs, timeZoneName) {
   const input = fullArgs.toLowerCase();
   let time;
   let amPm;
@@ -334,7 +334,7 @@ function getUtcTimeString(fullArgs, timeZoneName) {
     time = fullArgs.split("pm")[0].trim();
     amPm = "PM";
   } else {
-    helperFunc.sendMsg(receivedMsg, "Incorrect time format. Use hh:mm am/pm");
+    sendMsg(receivedMsg, "Incorrect time format. Please use hh:mm am/pm");
     return;
   }
 
@@ -348,28 +348,8 @@ function getUtcTimeString(fullArgs, timeZoneName) {
   const dateTimeFormat = "YYYY-MM-DD hh:mm:ss A";
 
   const utcTime = moment.tz(inputDateTime, dateTimeFormat, timeZoneName);
-  const utcTimeString = utcTime.toISOString();
 
-  return utcTimeString;
-}
-
-function convertToTimeString(utcTimeString, timeZoneName, timeZoneDesc) {
-  const estTime = moment.tz(utcTimeString, "America/New_York");
-  const time = moment.tz(utcTimeString, timeZoneName);
-  const dateDiff = time.format("DD") - estTime.format("DD");
-  let dayString = " ";
-  switch (dateDiff) {
-    case 1:
-      dayString = " (Next Day) ";
-      break;
-    case -1:
-      dayString = " (Previous Day) ";
-      break;
-    default:
-      break;
-  }
-
-  return `${time.format("hh:mm A")}${dayString}${timeZoneDesc}\n`;
+  return utcTime;
 }
 
 module.exports = {
@@ -391,6 +371,5 @@ module.exports = {
   checkReact,
   checkPollString,
   restoreSpoilerTag,
-  getUtcTimeString,
-  convertToTimeString,
+  getUtcTime,
 };
