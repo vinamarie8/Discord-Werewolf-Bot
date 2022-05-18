@@ -447,6 +447,7 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
 
 //#region Other Commands
 function myTimezoneCommand(receivedMsg, args, fullArgs) {
+  console.log(receivedMsg);
   const utcTimeString = helperFunc.getUtcTimeString(
     fullArgs,
     "America/New_York"
