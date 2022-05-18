@@ -453,6 +453,7 @@ function myTimezoneCommand(receivedMsg, args, fullArgs) {
     "America/New_York"
   );
   const msgMoment = moment(receivedMsg.createdTimestamp);
+  console.log(msgMoment);
   const tzName = moment.tz.names().find((timezoneName) => {
     return msgMoment.format("ZZ") === moment.tz(timezoneName).format("ZZ");
   });
