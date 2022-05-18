@@ -447,6 +447,10 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
 
 //#region Other Commands
 function myTimezoneCommand(receivedMsg, args, fullArgs) {
+  // "mytimezone": {
+  //   "help": "`!mytimezone time_in_eastern` or `!mytz time_in_eastern`",
+  //   "desc": "Get your time converted from Eastern time"
+  // }
   console.log(receivedMsg);
   const utcTimeString = helperFunc.getUtcTimeString(
     fullArgs,
