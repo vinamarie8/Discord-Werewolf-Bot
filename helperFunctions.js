@@ -348,9 +348,10 @@ function getUtcTimeString(fullArgs, timeZoneName) {
   const dateTimeFormat = "YYYY-MM-DD hh:mm:ss A";
 
   const utcTime = moment.tz(inputDateTime, dateTimeFormat, timeZoneName);
+  console.log(utcTime, utcTime.format("x"), utcTime.format("X"));
   const utcTimeString = utcTime.toISOString();
 
-  return utcTimeString;
+  return utcTime;
 }
 
 function convertToTimeString(utcTimeString, timeZoneName, timeZoneDesc) {

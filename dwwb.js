@@ -87,6 +87,8 @@ function processCommand(receivedMsg) {
       case "mytz":
         myTimezoneCommand(receivedMsg, arguments, fullArgs);
         break;
+      case "convertET":
+        break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
@@ -474,16 +476,19 @@ function timeCommand(receivedMsg, args, fullArgs) {
     "America/New_York"
   );
 
-  let returnMsg = "";
-  constants.timezones.forEach((tz) => {
-    returnMsg += helperFunc.convertToTimeString(
-      utcTimeString,
-      tz.timeZoneName,
-      tz.timeZoneDesc
-    );
-  });
+  // let returnMsg = "";
+  // constants.timezones.forEach((tz) => {
+  //   returnMsg += helperFunc.convertToTimeString(
+  //     utcTimeString,
+  //     tz.timeZoneName,
+  //     tz.timeZoneDesc
+  //   );
+  // });
 
-  helperFunc.sendMsg(receivedMsg, returnMsg);
+  utcTimeString.format("x");
+  let testReturnMsg = `<t:${utcTimeString.format("X")}:t>`;
+  helperFunc.sendMsg(receivedMsg, testReturnMsg);
+  //helperFunc.sendMsg(receivedMsg, returnMsg);
 }
 
 function yesNoCommand(receivedMsg, fullArgs) {
