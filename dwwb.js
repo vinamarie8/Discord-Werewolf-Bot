@@ -84,6 +84,9 @@ function processCommand(receivedMsg) {
       case "et":
         convertEtCommand(receivedMsg, fullArgs);
         break;
+      case "tzfriendly":
+        tzFriendlyCommand(receivedMsg, arguments, fullArgs);
+        break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
@@ -459,6 +462,35 @@ function convertEtCommand(receivedMsg, fullArgs) {
       ? "Invalid time"
       : `<t:${utcTime.format("X")}:t>`;
     helperFunc.sendMsg(receivedMsg, returnMsg);
+  }
+}
+
+function tzFriendlyCommand(receivedMsg, args, fullArgs) {
+  console.log("hey");
+  var matches = fullArgs.match(/\<(.*?)\>/);
+
+  if (matches) {
+    const originalTime = matches[0];
+    const timeToConvert = matches[1].trim();
+
+    const utcTime = helperFunc.getUtcTime(
+      receivedMsg,
+      timeToConvert,
+      "America/New_York"
+    );
+
+    if (utcTime) {
+      const timeStamp = utcTime.format("X");
+      const convertedTime = timeStamp.toLowerCase().includes("invalid")
+        ? "Invalid time"
+        : `<t:${utcTime.format("X")}:t>`;
+
+      const fullTimeString = timeToConvert + ` ET (${convertedTime} local)`;
+      const returnMsg = fullArgs.replace(originalTime, fullTimeString);
+      console.log(fullTimeString);
+      helperFunc.sendMsg(receivedMsg, returnMsg);
+      helperFunc.deleteMsg(receivedMsg);
+    }
   }
 }
 

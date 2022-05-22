@@ -244,6 +244,13 @@ function sendMsg(receivedMsg, sendMsg) {
   receivedMsg.channel.send(sendMsg);
 }
 
+function deleteMsg(receivedMsg) {
+  receivedMsg
+    .delete()
+    .then((msg) => console.log(`Deleted message from ${msg.author.username}`))
+    .catch(console.error);
+}
+
 function cleanPollString(fullArgs, delimiter) {
   let pollArgs = fullArgs.split(delimiter);
   pollArgs.forEach((pollArg, index) => {
@@ -352,6 +359,23 @@ function getUtcTime(receivedMsg, fullArgs, timeZoneName) {
   return utcTime;
 }
 
+function convertToTimeString(utcTimeString, timeZoneName, timeZoneDesc) {
+  const estTime = moment.tz(utcTimeString, "America/New_York");
+  const time = moment.tz(utcTimeString, timeZoneName);
+  const dateDiff = time.format("DD") - estTime.format("DD");
+  let dayString = " ";
+  switch (dateDiff) {
+    case 1:
+      dayString = " (Next Day) ";
+      break;
+    case -1:
+      dayString = " (Previous Day) ";
+      break;
+    default:
+      break;
+  }
+}
+
 module.exports = {
   sendImg,
   getRandomNumber,
@@ -367,9 +391,11 @@ module.exports = {
   sendMsgEmbed,
   sendMsgMemberEmbed,
   sendMsg,
+  deleteMsg,
   cleanPollString,
   checkReact,
   checkPollString,
   restoreSpoilerTag,
   getUtcTime,
+  convertToTimeString,
 };
