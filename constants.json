@@ -77,14 +77,6 @@
     "pollreacts": {
       "help": "`!pollreacts question|choice1 = react1|choice2 = react2|choice3 = react3`",
       "desc": "Start a poll with custom emoji reacts (Shortcut: `!pr`)"
-    },
-    "timezones": {
-      "help": "`!timezones time_in_eastern`",
-      "desc": "Get a list of times converted from Eastern time"
-    },
-    "mytimezone": {
-      "help": "`!mytimezone time_in_eastern` or `!mytz time_in_eastern`",
-      "desc": "Get your time converted from Eastern time"
     }
   },
   "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",

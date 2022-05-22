@@ -80,13 +80,13 @@ function processCommand(receivedMsg) {
       case "help":
         helpCommand(receivedMsg, arguments);
         break;
-      case "timezones":
-        timeCommand(receivedMsg, arguments, fullArgs);
-        break;
-      case "mytimezone":
-      case "mytz":
-        myTimezoneCommand(receivedMsg, arguments, fullArgs);
-        break;
+      // case "timezones":
+      //   timeCommand(receivedMsg, arguments, fullArgs);
+      //   break;
+      // case "mytimezone":
+      // case "mytz":
+      //   myTimezoneCommand(receivedMsg, arguments, fullArgs);
+      //   break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
@@ -463,6 +463,14 @@ function myTimezoneCommand(receivedMsg, args, fullArgs) {
 }
 
 function timeCommand(receivedMsg, args, fullArgs) {
+  // "timezones": {
+  //   "help": "`!timezones time_in_eastern`",
+  //   "desc": "Get a list of times converted from Eastern time"
+  // },
+  // "mytimezone": {
+  //   "help": "`!mytimezone time_in_eastern` or `!mytz time_in_eastern`",
+  //   "desc": "Get your time converted from Eastern time"
+  // }
   const utcTimeString = helperFunc.getUtcTimeString(
     fullArgs,
     "America/New_York"
