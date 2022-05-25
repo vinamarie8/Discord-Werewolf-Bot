@@ -6,10 +6,10 @@ const constants = require("./constants.json");
 const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
-const pgSus = constants.pgSus;
-var moment = require("moment-timezone");
 
 const help = require("./commands/help.js");
+const basic = require("./commands/basic.js");
+const poll = require("./commands/poll.js");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -81,13 +81,6 @@ function processCommand(receivedMsg) {
       case "help":
         help.helpCommand(receivedMsg, arguments);
         break;
-      // case "timezones":
-      //   timeCommand(receivedMsg, arguments, fullArgs);
-      //   break;
-      // case "mytimezone":
-      // case "mytz":
-      //   myTimezoneCommand(receivedMsg, arguments, fullArgs);
-      //   break;
       case "vote":
         voteCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
@@ -105,7 +98,7 @@ function processCommand(receivedMsg) {
         wheelCommand(receivedMsg, arguments, primaryCommand, fullArgs);
         break;
       case "yn":
-        yesNoCommand(receivedMsg, fullArgsCleaned);
+        basic.yesNoCommand(receivedMsg, fullArgsCleaned);
         break;
       case "taz":
         tazCommand(receivedMsg, tazCommandArg);
@@ -119,19 +112,24 @@ function processCommand(receivedMsg) {
         break;
       case "random":
       case "number":
-        randomNumberCommand(receivedMsg, arguments);
+        basic.randomNumberCommand(receivedMsg, arguments);
         break;
       case "poll":
       case "polltime":
       case "pt":
-        pollCommand(receivedMsg, fullArgsCleaned);
+        poll.pollCommand(receivedMsg, fullArgsCleaned);
         break;
       case "pollreacts":
       case "pr":
-        pollReactsCommand(receivedMsg, primaryCommand, fullArgsCleaned);
+        poll.pollReactsCommand(
+          receivedMsg,
+          primaryCommand,
+          fullArgsCleaned,
+          client
+        );
         break;
       case "pgsus":
-        pgSusCommand(receivedMsg);
+        basic.pgSusCommand(receivedMsg);
         break;
       case "howlsend":
         helperFunc.sendMsg(receivedMsg, "Did you mean bowels end?");
@@ -385,78 +383,7 @@ function playersCommand(receivedMsg, arguments, primaryCommand, msgTitle) {
 }
 //#endregion Players Commands
 
-//#region Other Commands
-function myTimezoneCommand(receivedMsg, args, fullArgs) {
-  const utcTimeString = helperFunc.getUtcTimeString(
-    fullArgs,
-    "America/New_York"
-  );
-  const msgMoment = moment(receivedMsg.createdTimestamp);
-  const tzName = moment.tz.names().find((timezoneName) => {
-    return msgMoment.format("ZZ") === moment.tz(timezoneName).format("ZZ");
-  });
-
-  helperFunc.sendMsg(
-    receivedMsg,
-    helperFunc.convertToTimeString(utcTimeString, tzName, "(beta)")
-  );
-}
-
-function timeCommand(receivedMsg, args, fullArgs) {
-  // "timezones": {
-  //   "help": "`!timezones time_in_eastern`",
-  //   "desc": "Get a list of times converted from Eastern time"
-  // },
-  // "mytimezone": {
-  //   "help": "`!mytimezone time_in_eastern` or `!mytz time_in_eastern`",
-  //   "desc": "Get your time converted from Eastern time"
-  // }
-  const utcTimeString = helperFunc.getUtcTimeString(
-    fullArgs,
-    "America/New_York"
-  );
-
-  let returnMsg = "";
-  constants.timezones.forEach((tz) => {
-    returnMsg += helperFunc.convertToTimeString(
-      utcTimeString,
-      tz.timeZoneName,
-      tz.timeZoneDesc
-    );
-  });
-
-  helperFunc.sendMsg(receivedMsg, returnMsg);
-}
-
-function yesNoCommand(receivedMsg, fullArgs) {
-  let pollMsg = "Yes or No?";
-  let customMsg = fullArgs;
-  let reactsYN = ["👍", "👎"];
-  if (customMsg.length > 1) {
-    pollMsg = customMsg + "\n";
-  }
-  helperFunc.sendMsgWithReacts(receivedMsg, "", pollMsg, reactsYN, 2, "yn");
-}
-
-function randomNumberCommand(receivedMsg, arguments) {
-  let maxNum = 20;
-  if (arguments.length > 0) {
-    maxNum = arguments[0];
-  }
-  if (maxNum > 0 && maxNum % 1 === 0) {
-    let randomNumTitle = "Random number between 1 and " + maxNum;
-    let randomNum = helperFunc.getRandomNumber(maxNum);
-    helperFunc.sendMsgEmbed(receivedMsg, randomNumTitle, randomNum);
-  } else {
-    helperFunc.sendMsg(receivedMsg, "Please enter a positive whole number.");
-  }
-}
-
-function pgSusCommand(receivedMsg) {
-  const msg = pgSus[helperFunc.getRandomNumber(pgSus.length) - 1];
-  helperFunc.sendMsg(receivedMsg, msg);
-}
-
+//#region Other Commandss
 function tazCommand(receivedMsg, tazCommandArg) {
   switch (tazCommandArg) {
     case "birthdaytaz":
@@ -526,113 +453,6 @@ function tazCommand(receivedMsg, tazCommandArg) {
   }
 }
 //#endregion Other Commands
-
-//#region Poll Commands
-function pollCommand(receivedMsg, fullArgs) {
-  console.log(fullArgs);
-  let checkPollArgs = helperFunc.checkPollString(fullArgs);
-  if (typeof checkPollArgs === "string") {
-    let errMsg = checkPollArgs + " Try " + helpCommands["poll"]["help"];
-    helperFunc.sendMsg(receivedMsg, errMsg);
-    return;
-  }
-  let pollArgs = checkPollArgs;
-
-  // Build poll message
-  let question = pollArgs[0];
-  let choices = pollArgs.slice(1);
-  let pollMsg = "";
-  choices.forEach((choice, index) => {
-    pollMsg =
-      pollMsg + constants.reactsAlphabet[index] + " " + choice + newLineDouble;
-  });
-  console.log("before:" + pollMsg);
-  question = helperFunc.restoreSpoilerTag(question);
-  pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
-  console.log("after:" + pollMsg);
-  helperFunc.sendMsgWithReacts(
-    receivedMsg,
-    pollMsg,
-    question,
-    constants.reactsAlphabet,
-    choices.length,
-    "poll"
-  );
-}
-
-function pollReactsCommand(receivedMsg, primaryCommand, fullArgs) {
-  console.log(String(fullArgs));
-  let checkPollArgs = helperFunc.checkPollString(fullArgs);
-  if (typeof checkPollArgs === "string") {
-    let errMsg = checkPollArgs + " Try " + helpCommands["pollreacts"]["help"];
-    helperFunc.sendMsg(receivedMsg, errMsg);
-    return;
-  }
-  let pollArgs = checkPollArgs;
-
-  // Build poll message
-  let question = pollArgs[0];
-  let choices = pollArgs.slice(1);
-  let pollMsg = "";
-  let customReacts = [];
-  var errMsg = "";
-  choices.every((choice, index) => {
-    // Check formatting
-    let choiceArgs = helperFunc.cleanPollString(choice, "=");
-    console.log(choiceArgs);
-    console.log(choiceArgs.length);
-    if (choiceArgs.length != 2) {
-      console.log(errMsg);
-      errMsg =
-        "Sorry, one '=' is required per choice. Try " +
-        helpCommands["pollreacts"]["help"];
-      return false;
-    }
-
-    let choiceMsg = choiceArgs[0];
-    let choiceReact = choiceArgs[1];
-    // Check if react is valid
-    checkReact = helperFunc.checkReact(
-      client,
-      choiceReact,
-      customReacts,
-      choiceMsg
-    );
-    let strReturned =
-      typeof checkReact === "string" &&
-      Object.prototype.toString.call(checkReact) === "[object String]";
-    if (strReturned && checkReact != "" && checkReact.startsWith("Sorry")) {
-      errMsg = checkReact;
-      return false;
-    } else {
-      choiceReact = checkReact;
-    }
-
-    // Add choice and react to poll message
-    pollMsg = pollMsg + choiceReact + " " + choiceMsg + newLineDouble;
-    customReacts.push(choiceReact);
-    return true;
-  });
-
-  // Send poll with reacts
-  if (errMsg == "") {
-    console.log(pollMsg + " " + question);
-    console.log(customReacts);
-    question = helperFunc.restoreSpoilerTag(question);
-    pollMsg = helperFunc.restoreSpoilerTag(pollMsg);
-    helperFunc.sendMsgWithReacts(
-      receivedMsg,
-      pollMsg,
-      question,
-      customReacts,
-      customReacts.length,
-      primaryCommand
-    );
-  } else {
-    helperFunc.sendMsg(receivedMsg, errMsg);
-  }
-}
-//#endregion Poll Commands
 
 //#endregion
 

@@ -80,7 +80,7 @@
     }
   },
   "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
-  "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`",
+  "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `poll`, `pollreacts`",
   "embedColor": "#c09edb",
   "maxImageNumber": 7,
   "voteMsgTitle": "It's time to vote!",
