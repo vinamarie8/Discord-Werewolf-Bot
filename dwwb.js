@@ -7,8 +7,9 @@ const newLine = "\n";
 const newLineDouble = "\n\n";
 const helpCommands = constants.helpCommands;
 const pgSus = constants.pgSus;
-const emojiRegex = require("emoji-regex/text.js");
 var moment = require("moment-timezone");
+
+const help = require("./commands/help.js");
 
 client.on("ready", () => {
   console.log("Connected as " + client.user.tag);
@@ -78,7 +79,7 @@ function processCommand(receivedMsg) {
     }
     switch (primaryCommand) {
       case "help":
-        helpCommand(receivedMsg, arguments);
+        help.helpCommand(receivedMsg, arguments);
         break;
       // case "timezones":
       //   timeCommand(receivedMsg, arguments, fullArgs);
@@ -145,67 +146,6 @@ function processCommand(receivedMsg) {
 }
 
 //#region Command functions
-//#region Help
-function helpCommand(receivedMsg, arguments) {
-  if (arguments.length > 0) {
-    var command = String(arguments[0]).toLowerCase();
-    var helpMsgTitle = "How to use `" + command + "`";
-    var helpMsg = "";
-    var commandFound = true;
-
-    // Shourcuts/alternate commands
-    switch (command) {
-      case "number":
-        command = "random";
-        break;
-      case "vp":
-        command = "voteplayers";
-        break;
-      case "wp":
-        command = "wheelplayers";
-        break;
-      case "polltime":
-      case "pt":
-        command = "poll";
-        break;
-      case "pr":
-        command = "pollreacts";
-        break;
-    }
-
-    // Help for individual command
-    if (helpCommands[command]) {
-      helpMsg =
-        helpMsg +
-        helpCommands[command]["desc"] +
-        newLine +
-        helpCommands[command]["help"];
-    } else {
-      helpMsg =
-        "`" + command + "` not recognized. Try " + constants.availableCommands;
-      commandFound = false;
-      helperFunc.sendMsg(receivedMsg, helpMsg);
-    }
-
-    if (commandFound) {
-      helperFunc.sendMsgEmbed(receivedMsg, helpMsgTitle, helpMsg);
-    }
-  } else {
-    // Full help message
-    let fullHelpMsg = constants.helpInfo + newLineDouble;
-    fullHelpMsg +=
-      "Type `!help command` to get info on a command." +
-      newLine +
-      "List of commands:" +
-      newLine;
-    Object.keys(helpCommands).forEach((command) => {
-      fullHelpMsg += "`" + command + "`,";
-    });
-
-    helperFunc.sendMsgEmbed(receivedMsg, "Commands", fullHelpMsg);
-  }
-}
-//#endregion Help
 
 //#region Role Commands
 function voteCommand(receivedMsg, arguments, primaryCommand, fullArgs) {
