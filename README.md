@@ -1,9 +1,11 @@
 # Discord-Werewolf-Bot
 
 ## Setup
+
 I used [this tutorial](https://www.devdungeon.com/content/javascript-discord-bot-tutorial) to get my environment set up, and will be reffering to it below.
 
 <strong>Creating your own test instance of the bot</strong>
+
 <ol>
 <li>Follow the instructions for "Create a Discord App" in the tutorial</li>
 <li>Follow the instructions for "Create a bot user for your app" in the tutorial</li>
@@ -28,6 +30,7 @@ I used [this tutorial](https://www.devdungeon.com/content/javascript-discord-bot
 </ol>
 
 <strong>Setting up your Project Workspace</strong>
+
 <ol>
 <li>Install <a href=https://nodejs.org/en/download/>Node.js</a></li>
 <li>Install an IDE of your choice. I use <a href=https://code.visualstudio.com/>Visual Studio Code</a> with these plugins:</li>
@@ -43,7 +46,7 @@ I used [this tutorial](https://www.devdungeon.com/content/javascript-discord-bot
 <ul>
 <li>Replace secret_token with your bot's secret token. On the Discord bot application page go to Settings > Bot > Click on Copy under TOKEN</li>
 </ul>
-<li>In command prompt, run <code>node dwwb.js</code></li>
+<li>In command prompt, run <code>node index.js</code></li>
 <li>Your bot should now be online!</li>
 <li>Ctrl+C to stop the bot</li>
 </ol>

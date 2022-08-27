@@ -2,7 +2,7 @@
   "name": "discordwerewolfbot",
   "version": "1.0.0",
   "description": "Helper bot for DWWVD or DWWVZ",
-  "main": "dwwb.js",
+  "main": "index.js",
   "engines": {
     "node": "14.15.5",
     "npm": "*"
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dwwb.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
