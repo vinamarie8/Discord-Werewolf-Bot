@@ -323,7 +323,7 @@ function restoreSpoilerTag(pollString) {
   return pollString.split("@#$%^spoiler@#$%^").join("||");
 }
 
-function getUtcTimeString(fullArgs, timeZoneName) {
+function getUtcTimeString(receivedMsg, fullArgs, timeZoneName) {
   const input = fullArgs.toLowerCase();
   let time;
   let amPm;
@@ -334,7 +334,7 @@ function getUtcTimeString(fullArgs, timeZoneName) {
     time = fullArgs.split("pm")[0].trim();
     amPm = "PM";
   } else {
-    helperFunc.sendMsg(receivedMsg, "Incorrect time format. Use hh:mm am/pm");
+    sendMsg(receivedMsg, "Incorrect time format. Use hh:mm am/pm");
     return;
   }
 

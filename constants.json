@@ -4,7 +4,8 @@
     { "timeZoneName": "America/Chicago", "timeZoneDesc": "Central" },
     { "timeZoneName": "America/New_York", "timeZoneDesc": "East Coast" },
     { "timeZoneName": "Europe/London", "timeZoneDesc": "UK" },
-    { "timeZoneName": "Asia/Seoul", "timeZoneDesc": "Seoul" }
+    { "timeZoneName": "Africa/Johannesburg", "timeZoneDesc": "South Africa"},
+    { "timeZoneName": "Asia/Manila", "timeZoneDesc": "Philippines" }
   ],
   "reactsAlphabet": [
     "🇦",
@@ -77,10 +78,14 @@
     "pollreacts": {
       "help": "`!pollreacts question|choice1 = react1|choice2 = react2|choice3 = react3`",
       "desc": "Start a poll with custom emoji reacts (Shortcut: `!pr`)"
+    },
+    "timezones": {
+      "help": "`!timezones time_in_eastern`",
+      "desc": "Get a list of times converted from Eastern time"
     }
   },
   "helpInfo": "`&` can be used instead of `!`\nWhenever players are listed, any number of players can be mentioned.",
-  "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`",
+  "availableCommands": "`vote`, `voteplayers`, `wheel`, `wheeplayers`, `yn`, `random`, `number`, `poll`, `polltime`, `pollreacts`, `timezones`",
   "embedColor": "#c09edb",
   "maxImageNumber": 7,
   "voteMsgTitle": "It's time to vote!",
